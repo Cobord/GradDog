@@ -1,9 +1,10 @@
-# :)
+""":)"""
+import numbers
+from collections.abc import Iterable
 import numpy as np
 import graddog.math as math
 from graddog.trace import Trace, one_parent
-import numbers
-from collections.abc import Iterable
+
 
 """
 Any implementable unary (one_parent) or binary (two_parent) operations can be added here

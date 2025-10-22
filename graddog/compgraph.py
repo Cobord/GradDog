@@ -1,6 +1,7 @@
-# :)
+""":)"""
 import numpy as np
 import pandas as pd
+#pylint:disable=consider-using-from-import
 import graddog.math as math
 from itertools import combinations_with_replacement
 
@@ -10,7 +11,7 @@ class CompGraph:
     implements the singleton design pattern
     so that only one instance of a CompGraph object ever exists
     """
-
+    #pylint:disable=invalid-name, too-many-instance-attributes
     class __CompGraph:
         def __init__(self):
             self.reset()
@@ -57,6 +58,7 @@ class CompGraph:
             """
 
             # unpack trace data
+            #pylint:disable=protected-access
             formula, val, der, parents, op, param = (
                 trace._formula,
                 trace._val,

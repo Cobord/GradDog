@@ -1,16 +1,17 @@
-# :)
+""":)"""
 import numpy as np
 from graddog.trace import Variable
 from graddog.compgraph import CompGraph
 
-
+#pylint:disable=invalid-name, too-many-statements, too-many-branches
 def trace(f, seed, mode=None, return_second_deriv=False, verbose=False):
     """
     f : a function
     seed: a vector/list of scalars. If f is single-dimensional, seed can be a scalar
 
     Optional parameter mode
-        When mode = None, this function infers the more efficient mode from the number of input and output variables
+        When mode = None, this function infers the more efficient mode
+        from the number of input and output variables
 
     Optional parameter return_second_deriv (default is False)
         When return_second_deriv = True, this function returns f' AND f''
@@ -113,8 +114,7 @@ def trace(f, seed, mode=None, return_second_deriv=False, verbose=False):
     print(f"Computing {mode} mode derivative...")
     if mode == "forward":
         return CompGraph.forward_mode(output, verbose)
-    elif mode == "reverse":
+    if mode == "reverse":
         return CompGraph.reverse_mode(output, verbose)
-    else:
-        raise ValueError("Didnt recognize mode, should be forward or reverse")
+    raise ValueError("Didnt recognize mode, should be forward or reverse")
     ########################################################
