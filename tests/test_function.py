@@ -1,12 +1,27 @@
-import pytest 
+import pytest
 import numpy as np
 import graddog as gd
 from graddog.trace import Trace, Variable
-from graddog.functions import sin, arcsin, sinh, cos, arccos, cosh, tan, arctan, tanh, exp, log, sigmoid, sqrt
+from graddog.functions import (
+    sin,
+    arcsin,
+    sinh,
+    cos,
+    arccos,
+    cosh,
+    tan,
+    arctan,
+    tanh,
+    exp,
+    log,
+    sigmoid,
+    sqrt,
+)
+
 
 def test_sin():
     value = 0.5
-    x = Variable('x', value)
+    x = Variable("x", value)
     a = sin(value)
     b = arcsin(value)
     c = sinh(value)
@@ -20,9 +35,10 @@ def test_sin():
     assert h.val == pytest.approx(np.arcsin(value))
     assert i.val == pytest.approx(np.sinh(value))
 
+
 def test_cos():
     value = 0.5
-    x = Variable('x', value)
+    x = Variable("x", value)
     a = cos(value)
     b = arccos(value)
     c = cosh(value)
@@ -36,9 +52,10 @@ def test_cos():
     assert h.val == pytest.approx(np.arccos(value))
     assert i.val == pytest.approx(np.cosh(value))
 
+
 def test_tan():
     value = 0.5
-    x = Variable('x', value)
+    x = Variable("x", value)
     a = tan(value)
     b = arctan(value)
     c = tanh(value)
@@ -52,57 +69,64 @@ def test_tan():
     assert h.val == pytest.approx(np.arctan(value))
     assert i.val == pytest.approx(np.tanh(value))
 
+
 def test_sigmoid():
     value = 0.5
-    x = Variable('x', value)
+    x = Variable("x", value)
     g = sigmoid(x)
     a = sigmoid(value)
-    assert a == pytest.approx(1/(1 + np.exp(-value)))
-    assert g.val == pytest.approx(1/(1 + np.exp(-value)))
+    assert a == pytest.approx(1 / (1 + np.exp(-value)))
+    assert g.val == pytest.approx(1 / (1 + np.exp(-value)))
+
 
 def test_sqrt():
     value = 9
-    x = Variable('x', value)
+    x = Variable("x", value)
     a = sqrt(value)
     assert a == pytest.approx(np.sqrt(value))
     g = sqrt(x)
     assert g.val == pytest.approx(np.sqrt(value))
-        
+
+
 def test_log_base2():
-    x = Variable('x', 32)
+    x = Variable("x", 32)
     base = 2
     f = log(x, base=base)
     assert f._val == pytest.approx(5)
-    assert f._der['v1'] == 1/(x._val * np.log(base))
-    
+    assert f._der["v1"] == 1 / (x._val * np.log(base))
+
+
 def test_exp_base2():
-    x = Variable('x', 5)
+    x = Variable("x", 5)
     base = 2
     f = exp(x, base=base)
     assert f._val == pytest.approx(32)
-    assert f._der['v1'] == (base**x._val)*np.log(base)
+    assert f._der["v1"] == (base**x._val) * np.log(base)
+
 
 def test_log():
     value = 4
-    x = Variable('x', value)
+    x = Variable("x", value)
     f = log(x)
     a = log(value)
     assert a == pytest.approx(np.log(value))
     assert f._val == np.log(value)
-    assert f._der['v1'] == pytest.approx(0.25)
+    assert f._der["v1"] == pytest.approx(0.25)
+
 
 def test_exp():
     value = 67
-    x = Variable('x', value)
+    x = Variable("x", value)
     f = exp(x)
     a = exp(value)
     assert a == pytest.approx(np.exp(value))
     assert f._val == pytest.approx(np.exp(value), rel=1e-5)
-    assert f._der['v1'] == f._val
+    assert f._der["v1"] == f._val
+
 
 def test_composition_val():
-    value = np.pi/6
-    x = Variable('x', value)
+    value = np.pi / 6
+    x = Variable("x", value)
     c = cos(x)
     s = sin(x)
     t = tan(x)
@@ -110,57 +134,65 @@ def test_composition_val():
     f = c * t + e
     g = c + s
     assert isinstance(f, Trace)
-    assert f._val == np.cos(value)*np.tan(value) + np.exp(value)
+    assert f._val == np.cos(value) * np.tan(value) + np.exp(value)
+
 
 def test_basic_der():
     # Decorator function maker that can be used to create function variables
     def fm(f):
         def fun(x):
-            return f(x) 
-        return fun  
-      
+            return f(x)
+
+        return fun
+
     value = 0.5
     assert gd.trace(fm(sin), value) == np.cos(value)
     assert gd.trace(fm(cos), value) == -np.sin(value)
-    assert gd.trace(fm(tan), value) == 1/(np.cos(value)*np.cos(value))
+    assert gd.trace(fm(tan), value) == 1 / (np.cos(value) * np.cos(value))
+
 
 def test_composition_der():
     def f(x):
-        return cos(x)*tan(x) + exp(x)
+        return cos(x) * tan(x) + exp(x)
+
     value = 0.5
     der = gd.trace(f, value)
-    assert der[0] == -1*np.sin(value)*np.tan(value) + 1/np.cos(value) + np.exp(value)
+    assert der[0] == -1 * np.sin(value) * np.tan(value) + 1 / np.cos(value) + np.exp(
+        value
+    )
+
 
 def test_string_input():
     with pytest.raises(TypeError):
-        f = sin('test')
+        f = sin("test")
     with pytest.raises(TypeError):
-        f = cos('test')
+        f = cos("test")
     with pytest.raises(TypeError):
-        f = tan('test')
+        f = tan("test")
     with pytest.raises(TypeError):
-        f = sinh('test')
+        f = sinh("test")
     with pytest.raises(TypeError):
-        f = cosh('test')
+        f = cosh("test")
     with pytest.raises(TypeError):
-        f = tanh('test')
+        f = tanh("test")
     with pytest.raises(TypeError):
-        f = arcsin('test')
+        f = arcsin("test")
     with pytest.raises(TypeError):
-        f = arccos('test')
+        f = arccos("test")
     with pytest.raises(TypeError):
-        f = arctan('test')
+        f = arctan("test")
     with pytest.raises(TypeError):
-        f = sqrt('test')
+        f = sqrt("test")
     with pytest.raises(TypeError):
-        f = sigmoid('test')
+        f = sigmoid("test")
     with pytest.raises(TypeError):
-        f = log('test')
+        f = log("test")
     with pytest.raises(TypeError):
-        f = exp('test')
+        f = exp("test")
+
 
 def test_arc_domains():
-    x = Variable('x', 2)
+    x = Variable("x", 2)
     y = 2
     with pytest.raises(ValueError):
         f = arcsin(x)
@@ -171,8 +203,9 @@ def test_arc_domains():
     with pytest.raises(ValueError):
         f = arccos(y)
 
+
 def test_other_domains():
-    x = Variable('x', -2)
+    x = Variable("x", -2)
     y = -2
     with pytest.raises(ValueError):
         f = log(x)
@@ -183,8 +216,9 @@ def test_other_domains():
     with pytest.raises(ValueError):
         f = sqrt(y)
 
+
 def test_array_input():
-    arr = [Variable('x', 0.5), Variable('x', 0.5)]
+    arr = [Variable("x", 0.5), Variable("x", 0.5)]
     t1 = sin(arr)
     t2 = arcsin(arr)
     t3 = cos(arr)
@@ -209,4 +243,4 @@ def test_array_input():
     assert t10[0].val == pytest.approx(np.cosh(0.5))
     assert t11[1].val == pytest.approx(np.tanh(0.5))
     assert t12[0].val == pytest.approx(np.sqrt(0.5))
-    assert t13[1].val == pytest.approx(1/(1 + np.exp(-0.5)))
+    assert t13[1].val == pytest.approx(1 / (1 + np.exp(-0.5)))
