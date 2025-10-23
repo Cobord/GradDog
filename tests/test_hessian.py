@@ -1,8 +1,15 @@
+"""
+hessians
+"""
+
+# pylint:disable=ungrouped-imports, missing-function-docstring, unnecessary-dunder-call, protected-access, invalid-name
 import pytest
 import numpy as np
 import graddog as gd
 import graddog.math as ops
 from graddog.trace import Trace
+
+# pylint:disable=unused-import
 from graddog.functions import sin, cos, tan, exp, log, sigmoid
 
 
@@ -55,8 +62,8 @@ def test_multiple_inputs():
 def test_math_errors():
     x = Trace("x", 3, {"x": 1.0}, [])
     y = Trace("y", 3, {"y": 1.0}, [])
-    z = 3
+    _z = 3
     with pytest.raises(ValueError):
-        a = ops.new_double_deriv_one_parent(x, "relu")
+        _a = ops.new_double_deriv_one_parent(x, "relu")
     with pytest.raises(ValueError):
-        b = ops.new_double_deriv_two_parents(x, "relu", y)
+        _b = ops.new_double_deriv_two_parents(x, "relu", y)

@@ -1,9 +1,11 @@
 """:)"""
+
 import numpy as np
 from graddog.trace import Variable
 from graddog.compgraph import CompGraph
 
-#pylint:disable=invalid-name, too-many-statements, too-many-branches
+
+# pylint:disable=invalid-name, too-many-statements, too-many-branches
 def trace(f, seed, mode=None, return_second_deriv=False, verbose=False):
     """
     f : a function

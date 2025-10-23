@@ -1,3 +1,8 @@
+"""
+graddog.tools
+"""
+
+# pylint:disable=ungrouped-imports, unused-import, missing-function-docstring, unnecessary-dunder-call, protected-access, invalid-name
 import pytest
 import numpy as np
 from graddog.trace import Trace, Variable, one_parent, two_parents
@@ -16,6 +21,8 @@ from graddog.functions import (
     sigmoid,
     sqrt,
 )
+
+# pylint:disable=consider-using-from-import
 import graddog.tools as tools
 
 
@@ -79,7 +86,7 @@ def test_find_extrema():
     x1 = tools.find_extrema_firstorder(sq, 0, 5, n_pts=5)
     assert x1[0] == pytest.approx(0)
     x2 = tools.find_extrema_firstorder(sq, 4, 5, n_pts=5)
-    assert x2 == None
+    assert x2 is None
 
 
 def test_find_increasing():
@@ -89,7 +96,7 @@ def test_find_increasing():
     x1, y1 = tools.find_increasing(sq, 0, 10, n_pts=5)
     assert [x1[0], y1[0]] == [2.5, 5]
     x2 = tools.find_increasing(sq, -10, 0, n_pts=5)
-    assert x2 == None
+    assert x2 is None
 
 
 def test_find_decreasing():
@@ -97,7 +104,7 @@ def test_find_decreasing():
         return x**2 + 3
 
     x1 = tools.find_decreasing(sq, 0, 10, n_pts=5)
-    assert x1 == None
+    assert x1 is None
     x2, y2 = tools.find_decreasing(sq, -10, 0, n_pts=5)
     assert [x2[0], y2[0]] == [-10, -20]
 
@@ -112,5 +119,5 @@ def test_plot_with_tangent_line():
     x, val = tools.plot_with_tangent_line(quadratic, 5, 0.5, 10)
     assert x[0] == 0.5
     assert x[-1] == 10
-    for i in range(len(x)):
-        assert val[i] == pytest.approx(quadratic(x[i]))
+    for i, xi in enumerate(x):
+        assert val[i] == pytest.approx(quadratic(xi))

@@ -1,9 +1,13 @@
 """:)"""
+
+# pylint:disable=attribute-defined-outside-init, no-method-argument, no-self-argument
+# pylint:disable=inconsistent-return-statements, missing-function-docstring
+from itertools import combinations_with_replacement
 import numpy as np
 import pandas as pd
-#pylint:disable=consider-using-from-import
+
+# pylint:disable=consider-using-from-import
 import graddog.math as math
-from itertools import combinations_with_replacement
 
 
 class CompGraph:
@@ -11,7 +15,8 @@ class CompGraph:
     implements the singleton design pattern
     so that only one instance of a CompGraph object ever exists
     """
-    #pylint:disable=invalid-name, too-many-instance-attributes
+
+    # pylint:disable=invalid-name, too-many-instance-attributes
     class __CompGraph:
         def __init__(self):
             self.reset()
@@ -58,7 +63,7 @@ class CompGraph:
             """
 
             # unpack trace data
-            #pylint:disable=protected-access
+            # pylint:disable=protected-access
             formula, val, der, parents, op, param = (
                 trace._formula,
                 trace._val,
@@ -72,31 +77,30 @@ class CompGraph:
             existing_trace = self.get_existing_trace(formula)
             if existing_trace:
                 return existing_trace._trace_name
-            else:
-                # get new trace name
-                new_trace_name = self.new_trace_name()
+            # get new trace name
+            new_trace_name = self.new_trace_name()
 
-                # get new label
-                is_input, is_output = self.get_labels(op, formula)
+            # get new label
+            is_input, is_output = self.get_labels(op, formula)
 
-                # update computational graph
-                self.update_computational_graph(new_trace_name, parents)
+            # update computational graph
+            self.update_computational_graph(new_trace_name, parents)
 
-                # add this new trace to the dictionary of traces so far
-                self.traces[new_trace_name] = trace
+            # add this new trace to the dictionary of traces so far
+            self.traces[new_trace_name] = trace
 
-                # calculate partial derivatives to be formatted for the table.
-                derivs = self.partial_derivs_for_table(
-                    new_trace_name, der, op, parents, param
-                )
+            # calculate partial derivatives to be formatted for the table.
+            derivs = self.partial_derivs_for_table(
+                new_trace_name, der, op, parents, param
+            )
 
-                # update trace table
-                self.add_trace_table_row(
-                    new_trace_name, is_input, is_output, formula, val, derivs
-                )
+            # update trace table
+            self.add_trace_table_row(
+                new_trace_name, is_input, is_output, formula, val, derivs
+            )
 
-                # return new_trace_name to the Trace class
-                return new_trace_name
+            # return new_trace_name to the Trace class
+            return new_trace_name
 
         def get_existing_trace(self, formula):
             """
@@ -109,8 +113,7 @@ class CompGraph:
             if not already.empty:
                 trace_name = already["trace_name"].values[0]
                 return self.traces[trace_name]
-            else:
-                return None
+            return None
 
         def get_labels(self, op, formula):
             """
@@ -137,6 +140,7 @@ class CompGraph:
                 self.variables.append(formula)
                 self.num_vars += 1
 
+        # pylint:disable=protected-access
         def update_computational_graph(self, new_trace_name, parents):
             """
             Updates the information in self.ins and self.outs
@@ -153,10 +157,11 @@ class CompGraph:
             for x in parents:
                 self.outs[x._trace_name].append(new_trace_name)
                 row_index = int(x._trace_name[1:]) - 1
-                f = self.table.loc[row_index]["formula"]
+                _f = self.table.loc[row_index]["formula"]
                 self.table.at[row_index, "output"] = False
             self.outs[new_trace_name] = []
 
+        # pylint:disable=too-many-arguments,too-many-positional-arguments
         def add_trace_table_row(
             self, new_trace_name, is_input, is_output, formula, val, partial_derivs_list
         ):
@@ -171,6 +176,7 @@ class CompGraph:
                 val,
             ] + partial_derivs_list
 
+        # pylint:disable=too-many-arguments,too-many-positional-arguments, unused-argument
         def partial_derivs_for_table(self, new_trace_name, der, op, parents, param):
             """
             Partial derivative(s) of this trace
@@ -201,6 +207,7 @@ class CompGraph:
         def get_trace_row(self, trace_name):
             return int(trace_name[1:]) - 1
 
+        # pylint:disable=singleton-comparison
         def outputs(self):
             return self.table.loc[self.table["output"] == True]["trace_name"].values
 
@@ -216,6 +223,7 @@ class CompGraph:
         def __repr__(self):
             return repr(self.table)
 
+        # pylint:disable=protected-access
         def label_outputs(self, output):
             for o in output:
                 t = o._trace_name
@@ -313,6 +321,7 @@ class CompGraph:
 
                     self.trace_derivs[v] = d_outputs_d_v
 
+            # pylint:disable=unnecessary-lambda
             return np.hstack(
                 [
                     self.trace_derivs[x]
@@ -320,6 +329,7 @@ class CompGraph:
                 ]
             )
 
+        # pylint:disable=too-many-branches, consider-using-dict-items, too-many-locals
         def hessian(self, output, verbose=False):
             """
             Implements the edge-pushing algorithm by Gower and Mello
@@ -429,18 +439,42 @@ class CompGraph:
             print(repr(CompGraph.instance))
 
     def reset():
+        """
+        Sets all the attributes to their initial values
+        """
         if CompGraph.instance:
             CompGraph.instance.reset()
 
     def forward_mode(output, verbose):
+        """
+        step FORWARDS through the trace table, calculate derivatives along the way in trace_derivs
+
+        The gradient for each trace is computed as the vector d_v_d_variables
+
+        Returns the Jacobian matrix of derivatives df_i/dx_j for each output function f_i
+        w.r.t. each input variable x_j
+        """
         if CompGraph.instance:
             return CompGraph.instance.forward_mode_der(output, verbose)
 
     def reverse_mode(output, verbose):
+        """
+        step BACKWARDS through the trace table, calculate derivatives along the way in trace_derivs
+
+        The gradient for each trace is computed as the vector d_outputs_d_v
+
+        Returns the Jacobian matrix of derivatives df_i/dx_j for each output function f_i
+        w.r.t. each input variable x_j
+        """
         if CompGraph.instance:
             return CompGraph.instance.reverse_mode_der(output, verbose)
 
     def add_trace(trace):
+        """
+        Adds a trace to the trace table and stores the relevant partial derivatives
+
+        Returns the newly generated trace_name
+        """
         if not CompGraph.instance:
             CompGraph.instance = CompGraph.__CompGraph()
         return CompGraph.instance.add_trace(trace)
@@ -450,5 +484,14 @@ class CompGraph:
             return CompGraph.instance.num_outputs()
 
     def hessian(output, verbose):
+        """
+        Implements the edge-pushing algorithm by Gower and Mello
+        Specific implementation details from Wang, Pothen, and Hovland:
+        https://par.nsf.gov/servlets/purl/10039361
+
+        Returns BOTH the jacobian (first derivative) and hessian (second derivative)
+
+        Requires that the user has traced a scalar-output function f:Rm --> R
+        """
         if CompGraph.instance:
             return CompGraph.instance.hessian(output, verbose)

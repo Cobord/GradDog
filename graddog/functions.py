@@ -1,17 +1,22 @@
 """:)"""
+
+# pylint:disable=pointless-string-statement
 import numbers
 from collections.abc import Iterable
 import numpy as np
-import graddog.math as math
-from graddog.trace import Trace, one_parent
 
+# pylint:disable=consider-using-from-import
+import graddog.math as math
+
+# pylint:disable=unused-import
+from graddog.trace import Trace, one_parent
 
 """
 Any implementable unary (one_parent) or binary (two_parent) operations can be added here
-
 """
 
 
+# pylint:disable=raise-missing-from
 def sin(t):
     """
     This allows to create sin().
@@ -21,15 +26,14 @@ def sin(t):
     Return Trace that constitues sin() elementary function
     """
     try:
-        t_val = t.val
+        _t_val = t.val
         return one_parent(t, math.Ops.sin)
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.sin(t)
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sin(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
 def arcsin(t):
@@ -46,20 +50,18 @@ def arcsin(t):
         t_val = t.val
         if math.in_domain(t_val, math.Ops.arcsin):
             return one_parent(t, math.Ops.arcsin)
-        else:
-            raise ValueError("Input out of domain")
+        raise ValueError("Input out of domain")
     except AttributeError:
         if isinstance(t, numbers.Number):
             if math.in_domain(t, math.Ops.arcsin):
                 return np.arcsin(t)
-            else:
-                raise ValueError("Input out of domain")
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+            raise ValueError("Input out of domain")
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([arcsin(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from
 def cos(t):
     """
     This allows to create cos().
@@ -68,17 +70,17 @@ def cos(t):
     Return Trace that constitues cos() elementary function
     """
     try:
-        t_val = t.val
+        _t_val = t.val
         return one_parent(t, math.Ops.cos)
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.cos(t)
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([cos(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from
 def arccos(t):
     """
     This allows to creat arccos(). ValueError is caught if the input Trace
@@ -93,20 +95,18 @@ def arccos(t):
         t_val = t.val
         if math.in_domain(t_val, math.Ops.arccos):
             return one_parent(t, math.Ops.arccos)
-        else:
-            raise ValueError("Input out of domain")
+        raise ValueError("Input out of domain")
     except AttributeError:
         if isinstance(t, numbers.Number):
             if math.in_domain(t, math.Ops.arccos):
                 return np.arccos(t)
-            else:
-                raise ValueError("Input out of domain")
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+            raise ValueError("Input out of domain")
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([arccos(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from
 def tan(t):
     """
     This allows to create tan().
@@ -115,17 +115,17 @@ def tan(t):
     Return Trace that constitues tan() elementary function
     """
     try:
-        t_val = t.val
+        _t_val = t.val
         return one_parent(t, math.Ops.tan)
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.tan(t)
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([tan(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from
 def arctan(t):
     """
     This allows to creat arctan()
@@ -136,17 +136,17 @@ def arctan(t):
     Return Trace that constitues arctan() elementary function
     """
     try:
-        t_val = t.val
+        _t_val = t.val
         return one_parent(t, math.Ops.arctan)
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.arctan(t)
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([arctan(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from, protected-access
 def exp(t, base=np.e):
     """
     This allows to create exp().
@@ -156,7 +156,7 @@ def exp(t, base=np.e):
     Return Trace that constitues exp() elementary function with input base (default=e)
     """
     try:
-        t_val = t.val
+        _t_val = t.val
         formula = None
         if base != np.e:
             formula = f"{base}^{t._trace_name}"
@@ -164,12 +164,12 @@ def exp(t, base=np.e):
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.power(base, t)
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([exp(t_, base) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from, protected-access
 def log(t, base=np.e):
     """
     This allows to create log().
@@ -185,20 +185,18 @@ def log(t, base=np.e):
             formula = f"log_{base}({t._trace_name})"
         if math.in_domain(t_val, math.Ops.log, base):
             return one_parent(t, math.Ops.log, base, formula)
-        else:
-            raise ValueError("Input out of domain")
+        raise ValueError("Input out of domain")
     except AttributeError:
         if isinstance(t, numbers.Number):
             if math.in_domain(t, math.Ops.log, base):
                 return np.log(t) / np.log(base)
-            else:
-                raise ValueError("Input out of domain")
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+            raise ValueError("Input out of domain")
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([log(t_, base) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from
 def sinh(t):
     """
     This allows to create sinh().
@@ -208,17 +206,17 @@ def sinh(t):
     Return Trace that constitues sinh() elementary function
     """
     try:
-        t_val = t.val
+        _t_val = t.val
         return one_parent(t, math.Ops.sinh)
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.sinh(t)
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sinh(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from
 def cosh(t):
     """
     This allows to create cosh().
@@ -227,17 +225,17 @@ def cosh(t):
     Return Trace that constitues cosh() elementary function
     """
     try:
-        t_val = t.val
+        _t_val = t.val
         return one_parent(t, math.Ops.cosh)
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.cosh(t)
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([cosh(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from
 def tanh(t):
     """
     This allows to create tanh().
@@ -246,17 +244,17 @@ def tanh(t):
     Return Trace that constitues tanh() elementary function
     """
     try:
-        t_val = t.val
+        _t_val = t.val
         return one_parent(t, math.Ops.tanh)
     except AttributeError:
         if isinstance(t, numbers.Number):
             return np.tanh(t)
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([tanh(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from
 def sqrt(t):
     """
     This allows to create sqrt().
@@ -268,20 +266,18 @@ def sqrt(t):
         t_val = t.val
         if math.in_domain(t_val, math.Ops.sqrt):
             return one_parent(t, math.Ops.sqrt)
-        else:
-            raise ValueError("Input out of domain")
+        raise ValueError("Input out of domain")
     except AttributeError:
         if isinstance(t, numbers.Number):
             if math.in_domain(t, math.Ops.sqrt):
                 return t**0.5
-            else:
-                raise ValueError("Input out of domain")
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+            raise ValueError("Input out of domain")
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sqrt(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")
 
 
+# pylint:disable=raise-missing-from
 def sigmoid(t):
     """
     This allows to create sigmoid().
@@ -290,12 +286,11 @@ def sigmoid(t):
     Return Trace that constitues sigmoig() elementary function
     """
     try:
-        t_val = t.val
+        _t_val = t.val
         return one_parent(t, math.Ops.sigm)
     except AttributeError:
         if isinstance(t, numbers.Number):
             return 1 / (1 + np.exp(-t))
-        elif isinstance(t, Iterable) and not isinstance(t, str):
+        if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sigmoid(t_) for t_ in t])
-        else:
-            raise TypeError("Input(s) must be Trace or scalar")
+        raise TypeError("Input(s) must be Trace or scalar")

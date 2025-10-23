@@ -1,3 +1,8 @@
+"""
+mathematical functions
+"""
+
+# pylint:disable=ungrouped-imports, missing-function-docstring, unnecessary-dunder-call, protected-access, invalid-name
 import pytest
 import numpy as np
 import graddog as gd
@@ -132,7 +137,7 @@ def test_composition_val():
     t = tan(x)
     e = exp(x)
     f = c * t + e
-    g = c + s
+    _g = c + s
     assert isinstance(f, Trace)
     assert f._val == np.cos(value) * np.tan(value) + np.exp(value)
 
@@ -164,57 +169,57 @@ def test_composition_der():
 
 def test_string_input():
     with pytest.raises(TypeError):
-        f = sin("test")
+        _f = sin("test")
     with pytest.raises(TypeError):
-        f = cos("test")
+        _f = cos("test")
     with pytest.raises(TypeError):
-        f = tan("test")
+        _f = tan("test")
     with pytest.raises(TypeError):
-        f = sinh("test")
+        _f = sinh("test")
     with pytest.raises(TypeError):
-        f = cosh("test")
+        _f = cosh("test")
     with pytest.raises(TypeError):
-        f = tanh("test")
+        _f = tanh("test")
     with pytest.raises(TypeError):
-        f = arcsin("test")
+        _f = arcsin("test")
     with pytest.raises(TypeError):
-        f = arccos("test")
+        _f = arccos("test")
     with pytest.raises(TypeError):
-        f = arctan("test")
+        _f = arctan("test")
     with pytest.raises(TypeError):
-        f = sqrt("test")
+        _f = sqrt("test")
     with pytest.raises(TypeError):
-        f = sigmoid("test")
+        _f = sigmoid("test")
     with pytest.raises(TypeError):
-        f = log("test")
+        _f = log("test")
     with pytest.raises(TypeError):
-        f = exp("test")
+        _f = exp("test")
 
 
 def test_arc_domains():
     x = Variable("x", 2)
     y = 2
     with pytest.raises(ValueError):
-        f = arcsin(x)
+        _f = arcsin(x)
     with pytest.raises(ValueError):
-        f = arccos(x)
+        _f = arccos(x)
     with pytest.raises(ValueError):
-        f = arcsin(y)
+        _f = arcsin(y)
     with pytest.raises(ValueError):
-        f = arccos(y)
+        _f = arccos(y)
 
 
 def test_other_domains():
     x = Variable("x", -2)
     y = -2
     with pytest.raises(ValueError):
-        f = log(x)
+        _f = log(x)
     with pytest.raises(ValueError):
-        f = log(y)
+        _f = log(y)
     with pytest.raises(ValueError):
-        f = sqrt(x)
+        _f = sqrt(x)
     with pytest.raises(ValueError):
-        f = sqrt(y)
+        _f = sqrt(y)
 
 
 def test_array_input():
@@ -238,6 +243,7 @@ def test_array_input():
     assert t4[1].val == pytest.approx(np.arccos(0.5))
     assert t5[0].val == pytest.approx(np.tan(0.5))
     assert t6[1].val == pytest.approx(np.arctan(0.5))
+    assert t7[1].val == pytest.approx(np.exp(0.5))
     assert t8[0].val == pytest.approx(np.log(0.5))
     assert t9[1].val == pytest.approx(np.sinh(0.5))
     assert t10[0].val == pytest.approx(np.cosh(0.5))

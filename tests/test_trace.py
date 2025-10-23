@@ -1,8 +1,15 @@
+"""
+Trace and gd.trace
+"""
+
+# pylint:disable=ungrouped-imports, missing-function-docstring, unnecessary-dunder-call, protected-access, invalid-name
 import pytest
-import graddog.math as ops
 import numpy as np
+import graddog.math as ops
 import graddog as gd
 from graddog.trace import Trace, Variable, one_parent, two_parents
+
+# pylint:disable=unused-import
 from graddog.functions import (
     sin,
     arcsin,
@@ -93,11 +100,11 @@ def test_one_parent():
     assert a.val == np.cos(3)
 
     with pytest.raises(TypeError):
-        c = one_parent(x, "cos", param="test")
+        _c = one_parent(x, "cos", param="test")
 
     with pytest.raises(TypeError):
         x = "test"
-        d = one_parent(x, "cos")
+        _d = one_parent(x, "cos")
 
 
 def test_two_parent():
@@ -137,6 +144,7 @@ def test_RMtoRN():
     assert x[3][3] == pytest.approx(7.70489137)
 
 
+# pylint:disable=unused-variable
 def test_math_errors():
     x = Trace("x", 3, {"x": 1.0}, [])
     y = Trace("y", 3, {"y": 1.0}, [])
