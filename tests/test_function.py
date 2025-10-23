@@ -222,8 +222,10 @@ def test_other_domains():
         _f = sqrt(y)
 
 
+#pylint:disable=too-many-locals
 def test_array_input():
-    arr = [Variable("x", 0.5), Variable("x", 0.5)]
+    vals = [0.5, 0.2, 0.999]
+    arr = [Variable("x", val) for val in vals]
     t1 = sin(arr)
     t2 = arcsin(arr)
     t3 = cos(arr)
@@ -237,16 +239,17 @@ def test_array_input():
     t11 = tanh(arr)
     t12 = sqrt(arr)
     t13 = sigmoid(arr)
-    assert t1[0].val == pytest.approx(np.sin(0.5))
-    assert t2[1].val == pytest.approx(np.arcsin(0.5))
-    assert t3[0].val == pytest.approx(np.cos(0.5))
-    assert t4[1].val == pytest.approx(np.arccos(0.5))
-    assert t5[0].val == pytest.approx(np.tan(0.5))
-    assert t6[1].val == pytest.approx(np.arctan(0.5))
-    assert t7[1].val == pytest.approx(np.exp(0.5))
-    assert t8[0].val == pytest.approx(np.log(0.5))
-    assert t9[1].val == pytest.approx(np.sinh(0.5))
-    assert t10[0].val == pytest.approx(np.cosh(0.5))
-    assert t11[1].val == pytest.approx(np.tanh(0.5))
-    assert t12[0].val == pytest.approx(np.sqrt(0.5))
-    assert t13[1].val == pytest.approx(1 / (1 + np.exp(-0.5)))
+    for idx, val in enumerate(vals):
+        assert t1[idx].val == pytest.approx(np.sin(val))
+        assert t2[idx].val == pytest.approx(np.arcsin(val))
+        assert t3[idx].val == pytest.approx(np.cos(val))
+        assert t4[idx].val == pytest.approx(np.arccos(val))
+        assert t5[idx].val == pytest.approx(np.tan(val))
+        assert t6[idx].val == pytest.approx(np.arctan(val))
+        assert t7[idx].val == pytest.approx(np.exp(val))
+        assert t8[idx].val == pytest.approx(np.log(val))
+        assert t9[idx].val == pytest.approx(np.sinh(val))
+        assert t10[idx].val == pytest.approx(np.cosh(val))
+        assert t11[idx].val == pytest.approx(np.tanh(val))
+        assert t12[idx].val == pytest.approx(np.sqrt(val))
+        assert t13[idx].val == pytest.approx(1 / (1 + np.exp(-val)))
