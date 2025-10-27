@@ -2,6 +2,7 @@
 # :)
 """
 
+from typing import Optional
 import numpy as np
 
 
@@ -197,41 +198,41 @@ class Ops:
 def deriv_one_parent(t, op, param=None):
     """derivative of a trace with one parent"""
     try:
-        d_op_dt = Ops.one_parent_rules[op]["der"](t.val, param)
+        d_op_dt = Ops.one_parent_rules[op][Ops.der](t.val, param)
         return {t._trace_name: d_op_dt}
     except KeyError:
         # pylint:disable=raise-missing-from
-        raise ValueError("need to implement operation", op)
+        raise ValueError(f"need to implement derivative of operation {op}")
 
 
 # pylint:disable=protected-access
 def deriv_two_parents(t1, op, t2):
     """derivative of a trace with two parents"""
     try:
-        d_op_dt1, d_op_dt2 = Ops.two_parent_rules[op]["der"](t1.val, t2.val)
+        d_op_dt1, d_op_dt2 = Ops.two_parent_rules[op][Ops.der](t1.val, t2.val)
         return {t1._trace_name: d_op_dt1, t2._trace_name: d_op_dt2}
     except KeyError:
         # pylint:disable=raise-missing-from
-        raise ValueError("need to implement operation", op)
+        raise ValueError(f"need to implement derivative of operation {op}")
 
 
 def val_one_parent(t, op, param=None):
     """value of a trace with one parent and optional scalar parameter"""
     try:
         # t is a trace
-        return Ops.one_parent_rules[op]["val"](t.val, param)
+        return Ops.one_parent_rules[op][Ops.val](t.val, param)
     except KeyError:
         # pylint:disable=raise-missing-from
-        raise ValueError("need to implement operation", op)
+        raise ValueError(f"need to implement value of operation {op}")
 
 
 def val_two_parents(t1, op, t2):
     """value of a trace with two parents"""
     try:
-        return Ops.two_parent_rules[op]["val"](t1.val, t2.val)
+        return Ops.two_parent_rules[op][Ops.val](t1.val, t2.val)
     except KeyError:
         # pylint:disable=raise-missing-from
-        raise ValueError("need to implement operation", op)
+        raise ValueError(f"need to implement value of operation {op}")
 
 
 def deriv(t, op, other=None):

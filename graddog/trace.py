@@ -5,6 +5,7 @@
 # pylint:disable=consider-using-from-import, protected-access
 
 import numbers
+from typing import Optional
 import graddog.math as math
 from graddog.compgraph import CompGraph
 
@@ -16,7 +17,7 @@ class Trace:
     """
 
     # pylint:disable=too-many-arguments, too-many-positional-arguments
-    def __init__(self, formula, val, der, parents, op=None, param=None):
+    def __init__(self, formula, val: Optional[numbers.Number], der, parents, op=None, param=None):
         """
         The constructor for Trace class.
         Adds the new trace element to the CompGraph
@@ -61,7 +62,7 @@ class Trace:
         return self._val
 
     @val.setter
-    def val(self, new_val):
+    def val(self, new_val: numbers.Number):
         """
         This resets the _val of a Trace instance
         """

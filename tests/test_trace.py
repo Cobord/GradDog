@@ -3,6 +3,7 @@ Trace and gd.trace
 """
 
 # pylint:disable=ungrouped-imports, missing-function-docstring, unnecessary-dunder-call, protected-access, invalid-name
+import re
 import pytest
 import numpy as np
 import graddog.math as ops
@@ -28,9 +29,10 @@ from graddog.functions import (
 
 
 def test_string_input_var():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError,
+                       match="Value of variable should be numerical"):
         x = Variable("x", "test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Value should be numerical"):
         x = Variable("x", 3)
         x.val = 2
         x.val = "test"
@@ -79,7 +81,7 @@ def test_basic_reverse():
     assert gd.trace(fm(tan), value, mode="reverse") == 1 / (
         np.cos(value) * np.cos(value)
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="'test' is not a valid Mode"):
         gd.trace(fm(sin), value, mode="test")
 
 
@@ -99,11 +101,17 @@ def test_one_parent():
     a = one_parent(x, "cos")
     assert a.val == np.cos(3)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError,match="Parameter must be scalar type"):
         _c = one_parent(x, "cos", param="test")
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Input t must be of type Trace"):
         x = "test"
+        _d = one_parent(x, "cos")
+    with pytest.raises(TypeError, match="Input t must be of type Trace"):
+        x = 4
+        _d = one_parent(x, "cos")
+    with pytest.raises(TypeError, match="Input t must be of type Trace"):
+        x = [4,6]
         _d = one_parent(x, "cos")
 
 
@@ -116,7 +124,7 @@ def test_two_parent():
     assert a.val == 27
     assert b.val == 27
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="Input must be numerical or Trace instance"):
         z = two_parents(x, "cos", "test")
 
 
@@ -149,11 +157,11 @@ def test_math_errors():
     x = Trace("x", 3, {"x": 1.0}, [])
     y = Trace("y", 3, {"y": 1.0}, [])
     z = 3
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="need to implement derivative of operation relu"):
         a = ops.deriv_one_parent(x, "relu")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="need to implement derivative of operation relu"):
         b = ops.deriv_two_parents(x, "relu", y)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="need to implement value of operation relu"):
         d = ops.val_one_parent(x, "relu")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="need to implement value of operation relu"):
         e = ops.val_two_parents(x, "relu", y)

@@ -1,12 +1,14 @@
 """:)"""
 
+from typing import Optional, cast
 import numpy as np
+from graddog.modes import Mode
 from graddog.trace import Variable
 from graddog.compgraph import CompGraph
 
 
 # pylint:disable=invalid-name, too-many-statements, too-many-branches
-def trace(f, seed, mode=None, return_second_deriv=False, verbose=False):
+def trace(f, seed, mode: Optional[Mode] = None, return_second_deriv=False, verbose=False):
     """
     f : a function
     seed: a vector/list of scalars. If f is single-dimensional, seed can be a scalar
@@ -91,7 +93,7 @@ def trace(f, seed, mode=None, return_second_deriv=False, verbose=False):
 
     ##################### Second Derivative #########################
     if return_second_deriv:
-        if mode is not None and mode.lower() != "reverse":
+        if mode is not None and mode != Mode.REVERSE:
             raise ValueError(
                 "Second derivative is automatically calculated in reverse mode"
             )
@@ -104,19 +106,23 @@ def trace(f, seed, mode=None, return_second_deriv=False, verbose=False):
     ####### get user-defined mode or infer the more efficient mode ##########
     if mode is None:
         if M > N:
-            mode = "reverse"
+            mode = Mode.REVERSE
         else:
-            mode = "forward"
+            mode = Mode.FORWARD
+    elif isinstance(mode,Mode):
+        pass
+    elif isinstance(mode,str):
+        mode = Mode(mode.lower())
     else:
-        mode = mode.lower()
+        raise ValueError("Didnt recognize mode, should be forward or reverse")
     ######################################################################
 
     ############## First Derivative ####################
     # if verbose:
     print(f"Computing {mode} mode derivative...")
-    if mode == "forward":
+    if mode == Mode.FORWARD:
         return CompGraph.forward_mode(output, verbose)
-    if mode == "reverse":
+    if mode == Mode.REVERSE:
         return CompGraph.reverse_mode(output, verbose)
     raise ValueError("Didnt recognize mode, should be forward or reverse")
     ########################################################

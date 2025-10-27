@@ -7,6 +7,7 @@ import pytest
 import numpy as np
 import graddog as gd
 import graddog.math as ops
+from graddog.modes import Mode
 from graddog.trace import Trace
 
 # pylint:disable=unused-import
@@ -27,10 +28,12 @@ def test_basic():
     assert x2_[0][0] == pytest.approx(-1)
     assert x2__[0][0] == pytest.approx(0)
     non_scalar = [0, np.pi / 2, np.pi, 3 * np.pi / 2, 2 * np.pi]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Can only compute second derivative for scalar output f"):
         x1_, x1__ = gd.trace(trig, non_scalar, return_second_deriv=True)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Second derivative is automatically calculated in reverse mode"):
         x1_, x1__ = gd.trace(trig, non_scalar, return_second_deriv=True, mode="forward")
+    with pytest.raises(ValueError, match="Second derivative is automatically calculated in reverse mode"):
+        x1_, x1__ = gd.trace(trig, non_scalar, return_second_deriv=True, mode=Mode.FORWARD)
     x3_, x3__ = gd.trace(poly, 2, return_second_deriv=True, verbose=True)
     assert x3_[0][0] == pytest.approx(64)
     assert x3__[0][0] == pytest.approx(96)
@@ -63,7 +66,7 @@ def test_math_errors():
     x = Trace("x", 3, {"x": 1.0}, [])
     y = Trace("y", 3, {"y": 1.0}, [])
     _z = 3
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match = "Double derivative currently not implemented for operation relu"):
         _a = ops.new_double_deriv_one_parent(x, "relu")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match = "Double derivative currently not implemented for operation relu"):
         _b = ops.new_double_deriv_two_parents(x, "relu", y)

@@ -3,6 +3,7 @@ mathematical functions
 """
 
 # pylint:disable=ungrouped-imports, missing-function-docstring, unnecessary-dunder-call, protected-access, invalid-name
+import re
 import pytest
 import numpy as np
 import graddog as gd
@@ -168,57 +169,58 @@ def test_composition_der():
 
 
 def test_string_input():
-    with pytest.raises(TypeError):
+    matcher = re.escape("Input(s) must be Trace or scalar")
+    with pytest.raises(TypeError, match=matcher):
         _f = sin("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = cos("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = tan("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = sinh("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = cosh("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = tanh("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = arcsin("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = arccos("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = arctan("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = sqrt("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = sigmoid("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = log("test")
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match=matcher):
         _f = exp("test")
 
 
 def test_arc_domains():
     x = Variable("x", 2)
     y = 2
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Input out of domain"):
         _f = arcsin(x)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Input out of domain"):
         _f = arccos(x)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Input out of domain"):
         _f = arcsin(y)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Input out of domain"):
         _f = arccos(y)
 
 
 def test_other_domains():
     x = Variable("x", -2)
     y = -2
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Input out of domain"):
         _f = log(x)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Input out of domain"):
         _f = log(y)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Input out of domain"):
         _f = sqrt(x)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Input out of domain"):
         _f = sqrt(y)
 
 
