@@ -78,11 +78,11 @@ def test_math_errors():
     _z = 3
     with pytest.raises(
         ValueError,
-        match="Double derivative currently not implemented for operation relu",
+        match="need to implement double derivative of operation relu",
     ):
         _a = ops.new_double_deriv_one_parent(x, "relu")
     with pytest.raises(
         ValueError,
-        match="Double derivative currently not implemented for operation relu",
+        match="need to implement double derivative of operation relu",
     ):
         _b = ops.new_double_deriv_two_parents(x, "relu", y)

@@ -1,8 +1,11 @@
-""":)"""
+"""
+Any implementable unary (one_parent) or binary (two_parent) operations can be added here
+"""
 
 # pylint:disable=pointless-string-statement
 import numbers
 from collections.abc import Iterable
+from typing import Union
 import numpy as np
 
 # pylint:disable=consider-using-from-import
@@ -11,13 +14,13 @@ import graddog.math as math
 # pylint:disable=unused-import
 from graddog.trace import Trace, one_parent
 
-"""
-Any implementable unary (one_parent) or binary (two_parent) operations can be added here
-"""
+type PossibleArgument = Union[
+    Trace, numbers.Number, Iterable[Union[Trace, numbers.Number]]
+]
 
 
 # pylint:disable=raise-missing-from
-def sin(t):
+def sin(t: PossibleArgument):
     """
     This allows to create sin().
     Parameters:
@@ -36,7 +39,7 @@ def sin(t):
         raise TypeError("Input(s) must be Trace or scalar")
 
 
-def arcsin(t):
+def arcsin(t: PossibleArgument):
     """
     This allows to creat arcsin(). ValueError is caught if the input Trace
     instance has value not in the domain of (-1, 1)
@@ -62,7 +65,7 @@ def arcsin(t):
 
 
 # pylint:disable=raise-missing-from
-def cos(t):
+def cos(t: PossibleArgument):
     """
     This allows to create cos().
     Parameters:
@@ -81,7 +84,7 @@ def cos(t):
 
 
 # pylint:disable=raise-missing-from
-def arccos(t):
+def arccos(t: PossibleArgument):
     """
     This allows to creat arccos(). ValueError is caught if the input Trace
     instance has value not in the domain of (-1, 1)
@@ -107,7 +110,7 @@ def arccos(t):
 
 
 # pylint:disable=raise-missing-from
-def tan(t):
+def tan(t: PossibleArgument):
     """
     This allows to create tan().
     Parameters:
@@ -126,7 +129,7 @@ def tan(t):
 
 
 # pylint:disable=raise-missing-from
-def arctan(t):
+def arctan(t: PossibleArgument):
     """
     This allows to creat arctan()
 
@@ -147,7 +150,7 @@ def arctan(t):
 
 
 # pylint:disable=raise-missing-from, protected-access
-def exp(t, base=np.e):
+def exp(t: PossibleArgument, base: Union[float, int] = np.e):
     """
     This allows to create exp().
     Parameters:
@@ -170,7 +173,7 @@ def exp(t, base=np.e):
 
 
 # pylint:disable=raise-missing-from, protected-access
-def log(t, base=np.e):
+def log(t: PossibleArgument, base: Union[float, int] = np.e):
     """
     This allows to create log().
     Parameters:
@@ -197,7 +200,7 @@ def log(t, base=np.e):
 
 
 # pylint:disable=raise-missing-from
-def sinh(t):
+def sinh(t: PossibleArgument):
     """
     This allows to create sinh().
     Parameters:
@@ -217,7 +220,7 @@ def sinh(t):
 
 
 # pylint:disable=raise-missing-from
-def cosh(t):
+def cosh(t: PossibleArgument):
     """
     This allows to create cosh().
     Parameters:
@@ -236,7 +239,7 @@ def cosh(t):
 
 
 # pylint:disable=raise-missing-from
-def tanh(t):
+def tanh(t: PossibleArgument):
     """
     This allows to create tanh().
     Parameters:
@@ -255,7 +258,7 @@ def tanh(t):
 
 
 # pylint:disable=raise-missing-from
-def sqrt(t):
+def sqrt(t: PossibleArgument):
     """
     This allows to create sqrt().
     Parameters:
@@ -278,7 +281,7 @@ def sqrt(t):
 
 
 # pylint:disable=raise-missing-from
-def sigmoid(t):
+def sigmoid(t: PossibleArgument):
     """
     This allows to create sigmoid().
     Parameters:

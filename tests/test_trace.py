@@ -167,3 +167,15 @@ def test_math_errors():
         d = ops.val_one_parent(x, "relu")
     with pytest.raises(ValueError, match="need to implement value of operation relu"):
         e = ops.val_two_parents(x, "relu", y)
+
+
+def test_math_errors_no_double_deriv():
+    x = Trace("x", 0.5, {"x": 1.0}, [])
+    no_double_derivs = ["arcsin", "arccos", "tan", "arctan", "sigm", "tanh"]
+    for op in no_double_derivs:
+        _a = ops.val_one_parent(x, op)
+        _a = ops.deriv_one_parent(x, op)
+        with pytest.raises(
+            ValueError, match=f"need to implement double derivative of operation {op}"
+        ):
+            a = ops.new_double_deriv_one_parent(x, op)
