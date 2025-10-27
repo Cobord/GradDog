@@ -224,7 +224,7 @@ def test_other_domains():
         _f = sqrt(y)
 
 
-#pylint:disable=too-many-locals
+# pylint:disable=too-many-locals
 def test_array_input():
     vals = [0.5, 0.2, 0.999]
     arr = [Variable("x", val) for val in vals]

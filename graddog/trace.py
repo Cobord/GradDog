@@ -17,7 +17,9 @@ class Trace:
     """
 
     # pylint:disable=too-many-arguments, too-many-positional-arguments
-    def __init__(self, formula, val: Optional[numbers.Number], der, parents, op=None, param=None):
+    def __init__(
+        self, formula, val: Optional[numbers.Number], der, parents, op=None, param=None
+    ):
         """
         The constructor for Trace class.
         Adds the new trace element to the CompGraph

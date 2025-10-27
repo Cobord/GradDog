@@ -8,7 +8,9 @@ from graddog.compgraph import CompGraph
 
 
 # pylint:disable=invalid-name, too-many-statements, too-many-branches
-def trace(f, seed, mode: Optional[Mode] = None, return_second_deriv=False, verbose=False):
+def trace(
+    f, seed, mode: Optional[Mode] = None, return_second_deriv=False, verbose=False
+):
     """
     f : a function
     seed: a vector/list of scalars. If f is single-dimensional, seed can be a scalar
@@ -109,9 +111,9 @@ def trace(f, seed, mode: Optional[Mode] = None, return_second_deriv=False, verbo
             mode = Mode.REVERSE
         else:
             mode = Mode.FORWARD
-    elif isinstance(mode,Mode):
+    elif isinstance(mode, Mode):
         pass
-    elif isinstance(mode,str):
+    elif isinstance(mode, str):
         mode = Mode(mode.lower())
     else:
         raise ValueError("Didnt recognize mode, should be forward or reverse")
