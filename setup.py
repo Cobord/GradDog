@@ -1,4 +1,10 @@
+"""
+Setup
+"""
+
 import pathlib
+
+# pylint:disable=unused-import
 from setuptools import setup, find_packages
 
 # The directory containing this file
@@ -22,7 +28,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ],
-    packages= ["graddog"],
+    packages=["graddog"],
     include_package_data=True,
     install_requires=["numpy", "pytest", "pandas", "matplotlib"],
 )
