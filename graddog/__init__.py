@@ -1,7 +1,8 @@
 """:)"""
 
-from typing import Optional, cast
+from typing import Optional, Tuple, cast
 import numpy as np
+from numpy.typing import NDArray
 from graddog.modes import Mode
 from graddog.trace import Variable
 from graddog.compgraph import CompGraph
@@ -128,3 +129,36 @@ def trace(
         return CompGraph.reverse_mode(output, verbose)
     raise ValueError("Didnt recognize mode, should be forward or reverse")
     ########################################################
+
+
+def derivatives_and_hessians(f, seed) -> Tuple[NDArray, NDArray]:
+    """
+    f : a function
+    seed: a vector/list of scalars. If f is single-dimensional, seed can be a scalar
+
+    this function returns f' AND f''
+
+    f can be
+    f: R --> R using explicit single-variable input
+    f: Rm --> R using explicit multi-variable input
+    f: R --> Rn using explicit single-variable input and explicit vector output
+    f: Rm --> R using explicit vector input
+    f: Rm --> Rn using explicit vector input and explicit vector output
+    f: Rm --> Rn using explicit multi-variable input and explicit vector output
+    f: Rm --> Rn using IMPLICIT vector input and IMPLICIT vector output
+    """
+    traced = trace(
+        f=f,
+        seed=seed,
+        return_second_deriv=True,
+        verbose=False,
+    )
+    match traced:
+        case (derivatives, hessian):
+            return (derivatives, hessian)
+        case None:
+            raise ValueError("Gave back nothing during trace")
+        case f_:  # pylint:disable = unused-variable
+            raise ValueError(
+                "Only gave back the expectation values but not the covariances"
+            )

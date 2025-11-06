@@ -85,21 +85,11 @@ class ExponentialFamily:
         Expectation values and covariances of the
         sufficient statistics T's
         """
-        traced = gd.trace(
+        f_, f__ = gd.derivatives_and_hessians(
             f=self.a_function,
             seed=self.eta_params,
-            return_second_deriv=True,
-            verbose=False,
         )
-        match traced:
-            case (f_, f__):
-                return (f_, f__)
-            case None:
-                raise ValueError("Gave back nothing during trace")
-            case f_:
-                raise ValueError(
-                    "Only gave back the expectation values but not the covariances"
-                )
+        return (f_, f__)
 
     def in_support(self, x: NDArray) -> bool:
         """

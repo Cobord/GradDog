@@ -38,8 +38,12 @@ if __name__ == "__main__":
     LEN = 10
     a = np.random.rand(LEN, LEN)
     seed = np.random.rand(LEN)
-    f_, f__ = gd.trace(make_quadratic(a), seed, return_second_deriv=True, verbose=False)
-    f_ = f_.round(2)
-    f__ = f__.round(2)
+
+    derivatives, hessian = gd.derivatives_and_hessians(
+        f=make_quadratic(a),
+        seed=seed,
+    )
+    f_ = derivatives.round(2)
+    f__ = hessian.round(2)
     print(f_)
     print(f__)
