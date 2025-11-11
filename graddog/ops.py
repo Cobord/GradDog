@@ -75,26 +75,26 @@ class Ops:
     __DOUBLE_DER_KEY = "double_der"
     __IN_DOMAIN_KEY = "in_domain"
 
-    add = "+"
-    sub = "-"
-    sub_R = "-R"
-    mul = "*"
-    div = "/"
-    div_R = "/R"
-    power = "^"
-    sin = "sin"
-    cos = "cos"
-    tan = "tan"
-    exp = "exp"
-    log = "log"
-    sqrt = "sqrt"
-    sigm = "sigm"
-    sinh = "sinh"
-    cosh = "cosh"
-    tanh = "tanh"
-    arcsin = "arcsin"
-    arccos = "arccos"
-    arctan = "arctan"
+    add = OpName("+")
+    sub = OpName("-")
+    sub_R = OpName("-R")
+    mul = OpName("*")
+    div = OpName("/")
+    div_R = OpName("/R")
+    power = OpName("^")
+    sin = OpName("sin")
+    cos = OpName("cos")
+    tan = OpName("tan")
+    exp = OpName("exp")
+    log = OpName("log")
+    sqrt = OpName("sqrt")
+    sigm = OpName("sigm")
+    sinh = OpName("sinh")
+    cosh = OpName("cosh")
+    tanh = OpName("tanh")
+    arcsin = OpName("arcsin")
+    arccos = OpName("arccos")
+    arctan = OpName("arctan")
 
     one_parent_rules: Dict[OpName, OneParentOp] = {
         add: OneParentOp(
@@ -363,10 +363,12 @@ class Ops:
         return rule.in_domain(cur_val, cur_param)
 
     @classmethod
-    def _in_domain_two_parents(cls, op: OpName, val_t1, val_t2):
+    def _in_domain_two_parents(cls, op: OpName | str, val_t1, val_t2):
         """
         in the domain of this op
         """
+        if isinstance(op, str):
+            op = OpName(op)
         rule = cls.two_parent_rules[op]
         if rule.in_domain is None:
             raise AttributeError(f"No in_domain in {op}")

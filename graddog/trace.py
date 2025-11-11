@@ -5,7 +5,7 @@
 # pylint:disable=consider-using-from-import, protected-access
 
 import numbers
-from typing import Optional
+from typing import Optional, cast
 import graddog.math as math
 from graddog.compgraph import CompGraph
 
@@ -18,12 +18,15 @@ class Trace:
 
     # pylint:disable=too-many-arguments, too-many-positional-arguments
     def __init__(
-        self, formula, val: Optional[numbers.Number], der, parents, op=None, param=None
+        self, formula,
+        val: Optional[numbers.Number | int | float],
+        der, parents, op=None, param=None
     ):
         """
         The constructor for Trace class.
         Adds the new trace element to the CompGraph
         """
+        val = None if val is None else cast(numbers.Number, val)
         self._formula = formula
 
         # val stores the value
@@ -64,7 +67,7 @@ class Trace:
         return self._val
 
     @val.setter
-    def val(self, new_val: numbers.Number):
+    def val(self, new_val: numbers.Number | int | float):
         """
         This resets the _val of a Trace instance
         """
@@ -239,6 +242,12 @@ class Variable(Trace):
         super().__init__(name, val, {name: 1.0}, [])
         self._name = name
 
+    @property
+    def val_known(self):
+        """
+        Returns non-public attribute _val
+        """
+        return cast(numbers.Number,self._val)
 
 def one_parent(t: Trace, op, param=None, formula=None):
     """

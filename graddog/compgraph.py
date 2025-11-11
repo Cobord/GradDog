@@ -2,7 +2,9 @@
 
 # pylint:disable=attribute-defined-outside-init, no-method-argument, no-self-argument
 # pylint:disable=inconsistent-return-statements, missing-function-docstring
+from __future__ import annotations
 from itertools import combinations_with_replacement
+from typing import Optional
 import numpy as np
 import pandas as pd
 
@@ -102,7 +104,7 @@ class CompGraph:
             # return new_trace_name to the Trace class
             return new_trace_name
 
-        def get_existing_trace(self, formula):
+        def get_existing_trace(self, formula) -> Optional["Trace"]: # type: ignore
             """
             if you are calculating a term already in the table, just look it up
             for example,
@@ -297,7 +299,7 @@ class CompGraph:
                     self.table.loc[row]["output"],
                 )
 
-                if not is_output:
+                if not is_output:  # type: ignore
 
                     if self.outs[v] == []:
                         if verbose:
@@ -430,14 +432,16 @@ class CompGraph:
 
     instance = None
 
-    def __init__():
+    def __init__(self):
         if not CompGraph.instance:
             CompGraph.instance = CompGraph.__CompGraph()
 
+    @staticmethod
     def show_trace_table():
         if CompGraph.instance:
             print(repr(CompGraph.instance))
 
+    @staticmethod
     def reset():
         """
         Sets all the attributes to their initial values
@@ -445,6 +449,7 @@ class CompGraph:
         if CompGraph.instance:
             CompGraph.instance.reset()
 
+    @staticmethod
     def forward_mode(output, verbose):
         """
         step FORWARDS through the trace table, calculate derivatives along the way in trace_derivs
@@ -457,6 +462,7 @@ class CompGraph:
         if CompGraph.instance:
             return CompGraph.instance.forward_mode_der(output, verbose)
 
+    @staticmethod
     def reverse_mode(output, verbose):
         """
         step BACKWARDS through the trace table, calculate derivatives along the way in trace_derivs
@@ -469,6 +475,7 @@ class CompGraph:
         if CompGraph.instance:
             return CompGraph.instance.reverse_mode_der(output, verbose)
 
+    @staticmethod
     def add_trace(trace):
         """
         Adds a trace to the trace table and stores the relevant partial derivatives
@@ -479,10 +486,12 @@ class CompGraph:
             CompGraph.instance = CompGraph.__CompGraph()
         return CompGraph.instance.add_trace(trace)
 
+    @staticmethod
     def num_outputs():
         if CompGraph.instance:
             return CompGraph.instance.num_outputs()
 
+    @staticmethod
     def hessian(output, verbose):
         """
         Implements the edge-pushing algorithm by Gower and Mello

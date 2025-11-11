@@ -3,8 +3,10 @@ graddog.tools
 """
 
 # pylint:disable=ungrouped-imports, unused-import, missing-function-docstring, unnecessary-dunder-call, protected-access, invalid-name
+from typing import Tuple, cast
 import pytest
 import numpy as np
+from numpy.typing import NDArray
 from graddog.trace import Trace, Variable, one_parent, two_parents
 from graddog.functions import (
     sin,
@@ -75,15 +77,15 @@ def test_find_extrema():
         yoffset = 0
         return a * (x - xoffset) ** 2 + yoffset
 
-    x = tools.find_extrema_firstorder(quadratic, -10, 10)
+    x = cast(NDArray,tools.find_extrema_firstorder(quadratic, -10, 10))
     assert x[0] == pytest.approx(2.92929292929292)
     assert x[1] == pytest.approx(3.13131313131313)
     # x == (2.929292929292929, 3.1313131313131315)
-    x = tools.find_extrema_firstorder(quadratic2, -10, 10)
+    x = cast(NDArray,tools.find_extrema_firstorder(quadratic2, -10, 10))
     assert x[0] == pytest.approx(2.92929292929292)
     assert x[1] == pytest.approx(3.13131313131313)
     # x == (2.929292929292929, 3.1313131313131315)
-    x1 = tools.find_extrema_firstorder(sq, 0, 5, n_pts=5)
+    x1 = cast(NDArray,tools.find_extrema_firstorder(sq, 0, 5, n_pts=5))
     assert x1[0] == pytest.approx(0)
     x2 = tools.find_extrema_firstorder(sq, 4, 5, n_pts=5)
     assert x2 is None
@@ -93,7 +95,7 @@ def test_find_increasing():
     def sq(x):
         return x**2 + 3
 
-    x1, y1 = tools.find_increasing(sq, 0, 10, n_pts=5)
+    x1, y1 = cast(Tuple[NDArray,NDArray],tools.find_increasing(sq, 0, 10, n_pts=5))
     assert [x1[0], y1[0]] == [2.5, 5]
     x2 = tools.find_increasing(sq, -10, 0, n_pts=5)
     assert x2 is None
@@ -105,7 +107,7 @@ def test_find_decreasing():
 
     x1 = tools.find_decreasing(sq, 0, 10, n_pts=5)
     assert x1 is None
-    x2, y2 = tools.find_decreasing(sq, -10, 0, n_pts=5)
+    x2, y2 = cast(Tuple[NDArray,NDArray],tools.find_decreasing(sq, -10, 0, n_pts=5))
     assert [x2[0], y2[0]] == [-10, -20]
 
 

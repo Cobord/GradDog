@@ -3,9 +3,12 @@ mathematical functions
 """
 
 # pylint:disable=ungrouped-imports, missing-function-docstring, unnecessary-dunder-call, protected-access, invalid-name
+import numbers
 import re
+from typing import List, cast
 import pytest
 import numpy as np
+from numpy.typing import NDArray
 import graddog as gd
 from graddog.trace import Trace, Variable
 from graddog.functions import (
@@ -28,15 +31,16 @@ from graddog.functions import (
 def test_sin():
     value = 0.5
     x = Variable("x", value)
-    a = sin(value)
-    b = arcsin(value)
-    c = sinh(value)
+    cast_value = cast(numbers.Number,value)
+    a = sin(cast_value)
+    b = arcsin(cast_value)
+    c = sinh(cast_value)
     assert a == pytest.approx(np.sin(value))
     assert b == pytest.approx(np.arcsin(value))
     assert c == pytest.approx(np.sinh(value))
-    g = sin(x)
-    h = arcsin(x)
-    i = sinh(x)
+    g = cast(Trace,sin(x))
+    h = cast(Trace,arcsin(x))
+    i = cast(Trace,sinh(x))
     assert g.val == pytest.approx(np.sin(value))
     assert h.val == pytest.approx(np.arcsin(value))
     assert i.val == pytest.approx(np.sinh(value))
@@ -45,15 +49,15 @@ def test_sin():
 def test_cos():
     value = 0.5
     x = Variable("x", value)
-    a = cos(value)
-    b = arccos(value)
-    c = cosh(value)
+    a = cos(cast(numbers.Number,value))
+    b = arccos(cast(numbers.Number,value))
+    c = cosh(cast(numbers.Number,value))
     assert a == pytest.approx(np.cos(value))
     assert b == pytest.approx(np.arccos(value))
     assert c == pytest.approx(np.cosh(value))
-    g = cos(x)
-    h = arccos(x)
-    i = cosh(x)
+    g = cast(Trace,cos(x))
+    h = cast(Trace,arccos(x))
+    i = cast(Trace,cosh(x))
     assert g.val == pytest.approx(np.cos(value))
     assert h.val == pytest.approx(np.arccos(value))
     assert i.val == pytest.approx(np.cosh(value))
@@ -62,15 +66,16 @@ def test_cos():
 def test_tan():
     value = 0.5
     x = Variable("x", value)
-    a = tan(value)
-    b = arctan(value)
-    c = tanh(value)
+    cast_value = cast(numbers.Number, value)
+    a = tan(cast_value)
+    b = arctan(cast_value)
+    c = tanh(cast_value)
     assert a == pytest.approx(np.tan(value))
     assert b == pytest.approx(np.arctan(value))
     assert c == pytest.approx(np.tanh(value))
-    g = tan(x)
-    h = arctan(x)
-    i = tanh(x)
+    g = cast(Trace,tan(x))
+    h = cast(Trace,arctan(x))
+    i = cast(Trace,tanh(x))
     assert g.val == pytest.approx(np.tan(value))
     assert h.val == pytest.approx(np.arctan(value))
     assert i.val == pytest.approx(np.tanh(value))
@@ -79,8 +84,9 @@ def test_tan():
 def test_sigmoid():
     value = 0.5
     x = Variable("x", value)
-    g = sigmoid(x)
-    a = sigmoid(value)
+    cast_value = cast(numbers.Number, value)
+    g = cast(Trace,sigmoid(x))
+    a = sigmoid(cast_value)
     assert a == pytest.approx(1 / (1 + np.exp(-value)))
     assert g.val == pytest.approx(1 / (1 + np.exp(-value)))
 
@@ -88,16 +94,17 @@ def test_sigmoid():
 def test_sqrt():
     value = 9
     x = Variable("x", value)
-    a = sqrt(value)
+    cast_value = cast(numbers.Number, value)
+    a = sqrt(cast_value)
     assert a == pytest.approx(np.sqrt(value))
-    g = sqrt(x)
+    g = cast(Trace,sqrt(x))
     assert g.val == pytest.approx(np.sqrt(value))
 
 
 def test_log_base2():
     x = Variable("x", 32)
     base = 2
-    f = log(x, base=base)
+    f = cast(Trace,log(x, base=base))
     assert f._val == pytest.approx(5)
     assert f._der["v1"] == 1 / (x._val * np.log(base))
 
@@ -105,9 +112,9 @@ def test_log_base2():
 def test_exp_base2():
     x = Variable("x", 5)
     base = 2
-    f = exp(x, base=base)
+    f = cast(Trace,exp(x, base=base))
     assert f._val == pytest.approx(32)
-    assert f._der["v1"] == (base**x._val) * np.log(base)
+    assert f._der["v1"] == (base**x._val) * np.log(base) # type: ignore
 
 
 def test_log():
@@ -116,8 +123,8 @@ def test_log():
     f = log(x)
     a = log(value)
     assert a == pytest.approx(np.log(value))
-    assert f._val == np.log(value)
-    assert f._der["v1"] == pytest.approx(0.25)
+    assert f._val == np.log(value) # type: ignore
+    assert f._der["v1"] == pytest.approx(0.25) # type: ignore
 
 
 def test_exp():
@@ -126,8 +133,8 @@ def test_exp():
     f = exp(x)
     a = exp(value)
     assert a == pytest.approx(np.exp(value))
-    assert f._val == pytest.approx(np.exp(value), rel=1e-5)
-    assert f._der["v1"] == f._val
+    assert f._val == pytest.approx(np.exp(value), rel=1e-5) # type: ignore
+    assert f._der["v1"] == f._val # type: ignore
 
 
 def test_composition_val():
@@ -162,7 +169,7 @@ def test_composition_der():
         return cos(x) * tan(x) + exp(x)
 
     value = 0.5
-    der = gd.trace(f, value)
+    der = cast(NDArray,gd.trace(f, value))
     assert der[0] == -1 * np.sin(value) * np.tan(value) + 1 / np.cos(value) + np.exp(
         value
     )
@@ -171,31 +178,31 @@ def test_composition_der():
 def test_string_input():
     matcher = re.escape("Input(s) must be Trace or scalar")
     with pytest.raises(TypeError, match=matcher):
-        _f = sin("test")
+        _f = sin("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = cos("test")
+        _f = cos("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = tan("test")
+        _f = tan("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = sinh("test")
+        _f = sinh("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = cosh("test")
+        _f = cosh("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = tanh("test")
+        _f = tanh("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = arcsin("test")
+        _f = arcsin("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = arccos("test")
+        _f = arccos("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = arctan("test")
+        _f = arctan("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = sqrt("test")
+        _f = sqrt("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = sigmoid("test")
+        _f = sigmoid("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = log("test")
+        _f = log("test") # type: ignore
     with pytest.raises(TypeError, match=matcher):
-        _f = exp("test")
+        _f = exp("test") # type: ignore
 
 
 def test_arc_domains():
@@ -228,19 +235,19 @@ def test_other_domains():
 def test_array_input():
     vals = [0.5, 0.2, 0.999]
     arr = [Variable("x", val) for val in vals]
-    t1 = sin(arr)
-    t2 = arcsin(arr)
-    t3 = cos(arr)
-    t4 = arccos(arr)
-    t5 = tan(arr)
-    t6 = arctan(arr)
-    t7 = exp(arr)
-    t8 = log(arr)
-    t9 = sinh(arr)
-    t10 = cosh(arr)
-    t11 = tanh(arr)
-    t12 = sqrt(arr)
-    t13 = sigmoid(arr)
+    t1 = cast(List[Trace],sin(arr))
+    t2 = cast(List[Trace],arcsin(arr))
+    t3 = cast(List[Trace],cos(arr))
+    t4 = cast(List[Trace],arccos(arr))
+    t5 = cast(List[Trace],tan(arr))
+    t6 = cast(List[Trace],arctan(arr))
+    t7 = cast(List[Trace],exp(arr))
+    t8 = cast(List[Trace],log(arr))
+    t9 = cast(List[Trace],sinh(arr))
+    t10 = cast(List[Trace],cosh(arr))
+    t11 = cast(List[Trace],tanh(arr))
+    t12 = cast(List[Trace],sqrt(arr))
+    t13 = cast(List[Trace],sigmoid(arr))
     for idx, val in enumerate(vals):
         assert t1[idx].val == pytest.approx(np.sin(val))
         assert t2[idx].val == pytest.approx(np.arcsin(val))

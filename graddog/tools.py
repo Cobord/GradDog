@@ -3,7 +3,9 @@ Tools to help the user engage with our package
 :)
 """
 
+from typing import Tuple, Union, cast
 import numpy as np
+from numpy.typing import NDArray
 import matplotlib.pyplot as plt
 import graddog as gd
 
@@ -45,7 +47,7 @@ def plot_derivative(
     # to a single-variable function
     # the only entries in the derivative matrix are therefore the diagonals,
     # since it is a single-variable function
-    f_ = gd.trace(function, xs, verbose=verbose)
+    f_ = cast(NDArray,gd.trace(function, xs, verbose=verbose))
     y_ders = [f_[i, i] for i in range(n_pts)]
 
     plt.figure(figsize=figsize)
@@ -63,7 +65,7 @@ def plot_derivative(
 # pylint:disable=too-many-positional-arguments,too-many-arguments
 def find_extrema_firstorder(
     function, xmin, xmax, n_pts=100, tolerance=1e-10, verbose=False
-):
+) -> Union[NDArray, Tuple[NDArray, NDArray], None]:
     """
     Locate the point where the derivative is closest to zero on the given interval.
 
@@ -82,12 +84,12 @@ def find_extrema_firstorder(
     If not it will return:
     xs: a tuple containing the two x values between which the extrema is located
     """
-    xs = np.linspace(xmin, xmax, num=n_pts)
+    xs = cast(NDArray,np.linspace(xmin, xmax, num=n_pts))
     # derivative comes as a matrix since we are passing in a vectorized input
     # to a single-variable function
     # the only entries in the derivative matrix are therefore the diagonals,
     # since it is a single-variable function
-    f_ = gd.trace(function, xs, verbose=verbose)
+    f_ = cast(NDArray,gd.trace(function, xs, verbose=verbose))
     y_ders = np.array([f_[i, i] for i in range(n_pts)])
 
     zeroidx = np.where(np.abs(y_ders) < tolerance)[0].astype(int)
@@ -97,20 +99,23 @@ def find_extrema_firstorder(
     increasing_idx = np.where(y_ders > tolerance)[0].astype(int)
 
     if len(decreasing_idx) == 0 or len(increasing_idx) == 0:
-        print(f"No extrema located in the interval {xmin} to {xmax}.")
+        if verbose:
+            print(f"No extrema located in the interval {xmin} to {xmax}.")
         return None
 
     if (
         decreasing_idx[-1] == increasing_idx[0] - 1
     ):  # Function goes from decreasing -> increasing
-        print(
-            f"Extrema located between x={xs[decreasing_idx[-1]]} and {xs[increasing_idx[0]]}"
-        )
+        if verbose:
+            print(
+                f"Extrema located between x={xs[decreasing_idx[-1]]} and {xs[increasing_idx[0]]}"
+            )
         return (xs[decreasing_idx[-1]], xs[increasing_idx[0]])
     if increasing_idx[-1] == decreasing_idx[0] - 1:  # Function goes from inc -> dec
-        print(
-            f"Extrema located between x={xs[increasing_idx[-1]]} and {xs[decreasing_idx[0]]}"
-        )
+        if verbose:
+            print(
+                f"Extrema located between x={xs[increasing_idx[-1]]} and {xs[decreasing_idx[0]]}"
+            )
         return (xs[increasing_idx[-1]], xs[decreasing_idx[0]])
     return None
 
@@ -136,12 +141,13 @@ def find_increasing(function, xmin, xmax, n_pts=100, verbose=False):
     # since we are passing in a vectorized input to a single-variable function
     # the only entries in the derivative matrix are therefore the diagonals,
     # since it is a single-variable function
-    f_ = gd.trace(function, xs, verbose=verbose)
+    f_ = cast(NDArray,gd.trace(function, xs, verbose=verbose))
     y_ders = np.array([f_[i, i] for i in range(n_pts)])
 
     idx = np.where(y_ders > 0)[0].astype(int)
     if len(idx) == 0:
-        print(f"No increasing values located in the interval {xmin} to {xmax}")
+        if verbose:
+            print(f"No increasing values located in the interval {xmin} to {xmax}")
         return None
     return xs[idx], y_ders[idx]
 
@@ -170,12 +176,13 @@ def find_decreasing(function, xmin, xmax, n_pts=100, verbose=False):
     #   to a single-variable function
     # the only entries in the derivative matrix are therefore the diagonals,
     #   since it is a single-variable function
-    f_ = gd.trace(function, xs, verbose=verbose)
+    f_ = cast(NDArray,gd.trace(function, xs, verbose=verbose))
     y_ders = np.array([f_[i, i] for i in range(n_pts)])
 
     idx = np.where(y_ders < 0)[0].astype(int)
     if len(idx) == 0:
-        print(f"No decreasing values located in the interval {xmin} to {xmax}")
+        if verbose:
+            print(f"No decreasing values located in the interval {xmin} to {xmax}")
         return None
     return xs[idx], y_ders[idx]
 
@@ -216,7 +223,7 @@ def plot_with_tangent_line(
     xs: the array of linearly spaced x values between xmin and xmax
     ys: the derivative evaluated at the values in xs
     """
-    deriv = gd.trace(function, xtangent, verbose=verbose)
+    deriv = cast(NDArray,gd.trace(function, xtangent, verbose=verbose))
     xs = np.linspace(xmin, xmax, num=n_pts)
     values = function(xs)
     ytangent = function(xtangent)

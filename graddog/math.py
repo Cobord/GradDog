@@ -6,8 +6,10 @@ from graddog.ops import Ops, OpName
 
 
 # pylint:disable=protected-access
-def deriv_one_parent(t, op: OpName, param=None):
+def deriv_one_parent(t, op: OpName | str, param=None):
     """derivative of a trace with one parent"""
+    if isinstance(op, str):
+        op = OpName(op)
     try:
         d_op_dt = Ops._deriv_one_parent(op, t.val, param)
         return {t._trace_name: d_op_dt}
@@ -131,7 +133,7 @@ def in_domain_two(query_val, op, query_val_other):
     in the domain of this op
     """
     try:
-        return Ops._in_domain_two_parent(op, query_val, query_val_other)
+        return Ops._in_domain_two_parents(op, query_val, query_val_other)
     except (KeyError, AttributeError):
         # pylint:disable=raise-missing-from
         raise ValueError(f"need to implement in domain of operation {op}")
