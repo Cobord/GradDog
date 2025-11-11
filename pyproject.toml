@@ -17,3 +17,7 @@ dev = [
     "black>=25.9.0",
     "pylint>=4.0.2",
 ]
+
+[tool.mypy]
+warn_unused_ignores = true
+enable_error_code = ["unused-ignore"]

@@ -47,7 +47,7 @@ def plot_derivative(
     # to a single-variable function
     # the only entries in the derivative matrix are therefore the diagonals,
     # since it is a single-variable function
-    f_ = cast(NDArray,gd.trace(function, xs, verbose=verbose))
+    f_ = cast(NDArray, gd.trace(function, xs, verbose=verbose))
     y_ders = [f_[i, i] for i in range(n_pts)]
 
     plt.figure(figsize=figsize)
@@ -84,12 +84,12 @@ def find_extrema_firstorder(
     If not it will return:
     xs: a tuple containing the two x values between which the extrema is located
     """
-    xs = cast(NDArray,np.linspace(xmin, xmax, num=n_pts))
+    xs = cast(NDArray, np.linspace(xmin, xmax, num=n_pts))
     # derivative comes as a matrix since we are passing in a vectorized input
     # to a single-variable function
     # the only entries in the derivative matrix are therefore the diagonals,
     # since it is a single-variable function
-    f_ = cast(NDArray,gd.trace(function, xs, verbose=verbose))
+    f_ = cast(NDArray, gd.trace(function, xs, verbose=verbose))
     y_ders = np.array([f_[i, i] for i in range(n_pts)])
 
     zeroidx = np.where(np.abs(y_ders) < tolerance)[0].astype(int)
@@ -141,7 +141,7 @@ def find_increasing(function, xmin, xmax, n_pts=100, verbose=False):
     # since we are passing in a vectorized input to a single-variable function
     # the only entries in the derivative matrix are therefore the diagonals,
     # since it is a single-variable function
-    f_ = cast(NDArray,gd.trace(function, xs, verbose=verbose))
+    f_ = cast(NDArray, gd.trace(function, xs, verbose=verbose))
     y_ders = np.array([f_[i, i] for i in range(n_pts)])
 
     idx = np.where(y_ders > 0)[0].astype(int)
@@ -176,7 +176,7 @@ def find_decreasing(function, xmin, xmax, n_pts=100, verbose=False):
     #   to a single-variable function
     # the only entries in the derivative matrix are therefore the diagonals,
     #   since it is a single-variable function
-    f_ = cast(NDArray,gd.trace(function, xs, verbose=verbose))
+    f_ = cast(NDArray, gd.trace(function, xs, verbose=verbose))
     y_ders = np.array([f_[i, i] for i in range(n_pts)])
 
     idx = np.where(y_ders < 0)[0].astype(int)
@@ -223,7 +223,7 @@ def plot_with_tangent_line(
     xs: the array of linearly spaced x values between xmin and xmax
     ys: the derivative evaluated at the values in xs
     """
-    deriv = cast(NDArray,gd.trace(function, xtangent, verbose=verbose))
+    deriv = cast(NDArray, gd.trace(function, xtangent, verbose=verbose))
     xs = np.linspace(xmin, xmax, num=n_pts)
     values = function(xs)
     ytangent = function(xtangent)

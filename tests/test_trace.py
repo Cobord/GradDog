@@ -35,7 +35,9 @@ def test_string_input_var():
     with pytest.raises(TypeError, match="Value should be numerical"):
         x = Variable("x", 3)
         x.val = 2
-        x.val = "test" # type: ignore
+    with pytest.raises(TypeError, match="Value should be numerical"):
+        x = Variable("x", 3)
+        x.val = "test"  # type: ignore[reportAttributeAccessIssue]
 
 
 def test_basic_ops():
@@ -82,7 +84,7 @@ def test_basic_reverse():
         np.cos(value) * np.cos(value)
     )
     with pytest.raises(ValueError, match="'test' is not a valid Mode"):
-        gd.trace(fm(sin), value, mode="test") # type: ignore
+        gd.trace(fm(sin), value, mode="test")  # type: ignore[reportArgumentType]
 
 
 def test_composite_reverse():
@@ -90,7 +92,7 @@ def test_composite_reverse():
         return cos(x) * tan(x) + exp(x)
 
     value = 0.5
-    der = cast(NDArray,gd.trace(f, value, mode="reverse"))
+    der = cast(NDArray, gd.trace(f, value, mode="reverse"))
     assert der[0] == -1 * np.sin(value) * np.tan(value) + 1 / np.cos(value) + np.exp(
         value
     )
@@ -106,13 +108,13 @@ def test_one_parent():
 
     with pytest.raises(TypeError, match="Input t must be of type Trace"):
         x = "test"
-        _d = one_parent(x, "cos") # type: ignore
+        _d = one_parent(x, "cos")  # type: ignore[reportArgumentType]
     with pytest.raises(TypeError, match="Input t must be of type Trace"):
         x = 4
-        _d = one_parent(x, "cos") # type: ignore
+        _d = one_parent(x, "cos")  # type: ignore[reportArgumentType]
     with pytest.raises(TypeError, match="Input t must be of type Trace"):
         x = [4, 6]
-        _d = one_parent(x, "cos") # type: ignore
+        _d = one_parent(x, "cos")  # type: ignore[reportArgumentType]
 
 
 def test_two_parent():
@@ -132,7 +134,7 @@ def test_RMtoR():
     def f(v):
         return v[0] + exp(v[1]) + 6 * v[2] ** 2
 
-    x = cast(NDArray,gd.trace(f, [1, 2, 4], verbose=True))
+    x = cast(NDArray, gd.trace(f, [1, 2, 4], verbose=True))
     assert x[0][0] == 1.0
     assert x[0][1] == pytest.approx(np.exp(2))
     assert x[0][2] == 48.0
@@ -142,7 +144,7 @@ def test_RMtoRN():
     def f(v):
         return [v[0] + v[1], v[1] - v[2], cos(v[2]), exp(v[3]) * sin(v[2])]
 
-    x = cast(NDArray,gd.trace(f, [1, 2, 3, 4]))
+    x = cast(NDArray, gd.trace(f, [1, 2, 3, 4]))
     assert x[0][0] == 1.0
     assert x[0][1] == 1.0
     assert x[0][2] == 0.0

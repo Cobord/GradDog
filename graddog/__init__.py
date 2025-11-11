@@ -10,9 +10,12 @@ from graddog.compgraph import CompGraph
 
 # pylint:disable=invalid-name, too-many-statements, too-many-branches
 def trace(
-    f, seed,
+    f,
+    seed,
     mode: Optional[Mode] | Literal["reverse"] | Literal["forward"] = None,
-    return_second_deriv=False, verbose=False, **kwargs
+    return_second_deriv=False,
+    verbose=False,
+    **kwargs,
 ):
     """
     f : a function
@@ -80,7 +83,7 @@ def trace(
 
     else:
         # single-variable input
-        output = f(new_variables[0],**kwargs)
+        output = f(new_variables[0], **kwargs)
         if verbose:
             print("...inferred the input is a variable...")
     if verbose:
@@ -138,6 +141,7 @@ def trace(
     raise ValueError("Didnt recognize mode, should be forward or reverse")
     ########################################################
 
+
 def derivatives_only(f, seed, **kwargs) -> NDArray:
     """
     f : a function
@@ -154,13 +158,17 @@ def derivatives_only(f, seed, **kwargs) -> NDArray:
     f: Rm --> Rn using explicit multi-variable input and explicit vector output
     f: Rm --> Rn using IMPLICIT vector input and IMPLICIT vector output
     """
-    return cast(NDArray,trace(
-        f=f,
-        seed=seed,
-        return_second_deriv=False,
-        verbose=False,
-        **kwargs,
-    ))
+    return cast(
+        NDArray,
+        trace(
+            f=f,
+            seed=seed,
+            return_second_deriv=False,
+            verbose=False,
+            **kwargs,
+        ),
+    )
+
 
 def derivatives_and_hessians(f, seed, **kwargs) -> Tuple[NDArray, NDArray]:
     """

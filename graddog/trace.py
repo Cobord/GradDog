@@ -18,9 +18,13 @@ class Trace:
 
     # pylint:disable=too-many-arguments, too-many-positional-arguments
     def __init__(
-        self, formula,
+        self,
+        formula,
         val: Optional[numbers.Number | int | float],
-        der, parents, op=None, param=None
+        der,
+        parents,
+        op=None,
+        param=None,
     ):
         """
         The constructor for Trace class.
@@ -247,7 +251,8 @@ class Variable(Trace):
         """
         Returns non-public attribute _val
         """
-        return cast(numbers.Number,self._val)
+        return cast(numbers.Number, self._val)
+
 
 def one_parent(t: Trace, op, param=None, formula=None):
     """

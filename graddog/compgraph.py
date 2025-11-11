@@ -4,7 +4,7 @@
 # pylint:disable=inconsistent-return-statements, missing-function-docstring
 from __future__ import annotations
 from itertools import combinations_with_replacement
-from typing import Optional
+from typing import Optional, cast
 import numpy as np
 import pandas as pd
 
@@ -104,7 +104,8 @@ class CompGraph:
             # return new_trace_name to the Trace class
             return new_trace_name
 
-        def get_existing_trace(self, formula) -> Optional["Trace"]: # type: ignore
+        def get_existing_trace(self, formula) \
+            -> Optional["Trace"]:  # type: ignore[reportUndefinedVariable]
             """
             if you are calculating a term already in the table, just look it up
             for example,
@@ -298,8 +299,9 @@ class CompGraph:
                     self.table.loc[row]["trace_name"],
                     self.table.loc[row]["output"],
                 )
+                is_output = cast(bool, is_output)
 
-                if not is_output:  # type: ignore
+                if not is_output:
 
                     if self.outs[v] == []:
                         if verbose:

@@ -31,13 +31,13 @@ def sin(t: PossibleArgument):
     Return Trace that constitues sin() elementary function
     """
     try:
-        _t_val = t.val # type: ignore
-        return one_parent(cast(Trace,t), math.Ops.sin)
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        return one_parent(cast(Trace, t), math.Ops.sin)
     except AttributeError:
         if isinstance(t, numbers.Number):
-            return np.sin(t) # type: ignore
+            return np.sin(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([sin(t_) for t_ in t]) # type: ignore
+            return np.array([sin(t_) for t_ in t])  # type: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -52,7 +52,7 @@ def arcsin(t: PossibleArgument):
     Return Trace that constitues arcsin() elementary function
     """
     try:
-        t_val = t.val # type: ignore
+        t_val = t.val  # type: ignore[reportAttributeAccessIssue]
         t = cast(Trace, t)
         if math.in_domain(t_val, math.Ops.arcsin):
             return one_parent(t, math.Ops.arcsin)
@@ -60,10 +60,10 @@ def arcsin(t: PossibleArgument):
     except AttributeError:
         if isinstance(t, numbers.Number):
             if math.in_domain(t, math.Ops.arcsin):
-                return np.arcsin(t) # type: ignore
+                return np.arcsin(t)  # type: ignore[reportCallIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([arcsin(t_) for t_ in t]) # type: ignore
+            return np.array([arcsin(t_) for t_ in t])  # type: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -76,13 +76,13 @@ def cos(t: PossibleArgument):
     Return Trace that constitues cos() elementary function
     """
     try:
-        _t_val = t.val # type: ignore
-        return one_parent(cast(Trace,t), math.Ops.cos)
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        return one_parent(cast(Trace, t), math.Ops.cos)
     except AttributeError:
         if isinstance(t, numbers.Number):
-            return np.cos(t) # type: ignore
+            return np.cos(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([cos(t_) for t_ in t]) # type: ignore
+            return np.array([cos(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -98,17 +98,17 @@ def arccos(t: PossibleArgument):
     Return Trace that constitues arccos() elementary function
     """
     try:
-        t_val = t.val # type: ignore
+        t_val = t.val  # type: ignore[reportAttributeAccessIssue]
         if math.in_domain(t_val, math.Ops.arccos):
-            return one_parent(cast(Trace,t), math.Ops.arccos)
+            return one_parent(cast(Trace, t), math.Ops.arccos)
         raise ValueError("Input out of domain")
     except AttributeError:
         if isinstance(t, numbers.Number):
             if math.in_domain(t, math.Ops.arccos):
-                return np.arccos(t) # type: ignore
+                return np.arccos(t)  # type: ignore[reportCallIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([arccos(t_) for t_ in t]) # type: ignore
+            return np.array([arccos(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -121,13 +121,13 @@ def tan(t: PossibleArgument):
     Return Trace that constitues tan() elementary function
     """
     try:
-        _t_val = t.val # type: ignore
-        return one_parent(cast(Trace,t), math.Ops.tan)
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        return one_parent(cast(Trace, t), math.Ops.tan)
     except AttributeError:
         if isinstance(t, numbers.Number):
-            return np.tan(t) # type: ignore
+            return np.tan(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([tan(t_) for t_ in t]) # type: ignore
+            return np.array([tan(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -142,13 +142,13 @@ def arctan(t: PossibleArgument):
     Return Trace that constitues arctan() elementary function
     """
     try:
-        _t_val = t.val # type: ignore
-        return one_parent(cast(Trace,t), math.Ops.arctan)
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        return one_parent(cast(Trace, t), math.Ops.arctan)
     except AttributeError:
         if isinstance(t, numbers.Number):
-            return np.arctan(t) # type: ignore
+            return np.arctan(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([arctan(t_) for t_ in t]) # type: ignore
+            return np.array([arctan(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -162,7 +162,7 @@ def exp(t: PossibleArgument, base: Union[float, int] = np.e):
     Return Trace that constitues exp() elementary function with input base (default=e)
     """
     try:
-        _t_val = t.val # type: ignore
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
         t = cast(Trace, t)
         formula = None
         if base != np.e:
@@ -170,9 +170,9 @@ def exp(t: PossibleArgument, base: Union[float, int] = np.e):
         return one_parent(t, math.Ops.exp, base, formula)
     except AttributeError:
         if isinstance(t, numbers.Number):
-            return np.power(base, t) # type: ignore
+            return np.power(base, t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([exp(t_, base) for t_ in t]) # type: ignore
+            return np.array([exp(t_, base) for t_ in t])  # type: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -186,7 +186,7 @@ def log(t: PossibleArgument, base: Union[float, int] = np.e):
     Return Trace that constitues log() elementary function with input base (default=e)
     """
     try:
-        t_val = t.val # type: ignore
+        t_val = t.val  # type: ignore[reportAttributeAccessIssue]
         t = cast(Trace, t)
         formula = None
         if base != np.e:
@@ -197,10 +197,10 @@ def log(t: PossibleArgument, base: Union[float, int] = np.e):
     except AttributeError:
         if isinstance(t, numbers.Number):
             if math.in_domain(t, math.Ops.log, base):
-                return np.log(t) / np.log(base) # type: ignore
+                return np.log(t) / np.log(base)  # type: ignore[reportCallIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([log(t_, base) for t_ in t])
+            return np.array([log(t_, base) for t_ in t]) # type: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -214,13 +214,13 @@ def sinh(t: PossibleArgument):
     Return Trace that constitues sinh() elementary function
     """
     try:
-        _t_val = t.val # type: ignore
-        return one_parent(cast(Trace,t), math.Ops.sinh)
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        return one_parent(cast(Trace, t), math.Ops.sinh)
     except AttributeError:
         if isinstance(t, numbers.Number):
-            return np.sinh(t) # type: ignore
+            return np.sinh(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([sinh(t_) for t_ in t]) # type: ignore
+            return np.array([sinh(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -233,13 +233,13 @@ def cosh(t: PossibleArgument):
     Return Trace that constitues cosh() elementary function
     """
     try:
-        _t_val = t.val # type: ignore
-        return one_parent(cast(Trace,t), math.Ops.cosh)
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        return one_parent(cast(Trace, t), math.Ops.cosh)
     except AttributeError:
         if isinstance(t, numbers.Number):
-            return np.cosh(t) # type: ignore
+            return np.cosh(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([cosh(t_) for t_ in t]) # type: ignore
+            return np.array([cosh(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -252,11 +252,11 @@ def tanh(t: PossibleArgument):
     Return Trace that constitues tanh() elementary function
     """
     try:
-        _t_val = t.val # type: ignore
-        return one_parent(cast(Trace,t), math.Ops.tanh)
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        return one_parent(cast(Trace, t), math.Ops.tanh)
     except AttributeError:
         if isinstance(t, numbers.Number):
-            return np.tanh(t) # type: ignore
+            return np.tanh(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([tanh(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
@@ -271,15 +271,15 @@ def sqrt(t: PossibleArgument):
     Return Trace that constitues sqrt() elementary function
     """
     try:
-        t_val = t.val # type: ignore
-        t = cast(Trace,t)
+        t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        t = cast(Trace, t)
         if math.in_domain(t_val, math.Ops.sqrt):
             return one_parent(t, math.Ops.sqrt)
         raise ValueError("Input out of domain")
     except AttributeError:
         if isinstance(t, numbers.Number):
             if math.in_domain(t, math.Ops.sqrt):
-                return t**0.5 # type: ignore
+                return t**0.5  # type: ignore[reportOperatorIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sqrt(t_) for t_ in t])
@@ -295,11 +295,12 @@ def sigmoid(t: PossibleArgument):
     Return Trace that constitues sigmoig() elementary function
     """
     try:
-        _t_val = t.val # type: ignore
-        return one_parent(cast(Trace,t), math.Ops.sigm)
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        return one_parent(cast(Trace, t), math.Ops.sigm)
     except AttributeError:
         if isinstance(t, numbers.Number):
-            return 1 / (1 + np.exp(-t)) # type: ignore
+            neg_t = -t  # type: ignore[reportOperatorIssue]
+            return 1 / (1 + np.exp(neg_t))
         if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sigmoid(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
