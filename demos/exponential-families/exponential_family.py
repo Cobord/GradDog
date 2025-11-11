@@ -3,16 +3,15 @@ Exponential Family
 """
 
 from abc import ABC, abstractmethod
-import itertools
 import numbers
-from typing import Any, Callable, Iterable, List, Optional, Tuple, Union, cast
+from typing import Callable, Iterable, List, Optional, Tuple, Union, cast
 import numpy as np
 from numpy.typing import NDArray
-
+from observed_information import FDistribution
 import graddog as gd
 from graddog.functions import PossibleArgument
 from graddog.trace import Trace
-from observed_information import FDistribution
+
 
 
 # pylint:disable=too-few-public-methods
