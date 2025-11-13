@@ -2,9 +2,11 @@
 Quadratic form
 Hessian should give back A
 """
+#pylint:disable=invalid-name
 
 from numpy.typing import NDArray
 import numpy as np
+import pytest
 
 import graddog as gd
 
@@ -34,16 +36,38 @@ def make_quadratic(a_matrix: NDArray):
     return f
 
 
-if __name__ == "__main__":
-    LEN = 10
+def test_smaller_quadratic():
+    """
+    a 4 by 4 1/2 x^T A x
+    """
+    LEN = 4
     a = np.random.rand(LEN, LEN)
+    a = (a + a.transpose())/2
     seed = np.random.rand(LEN)
 
     derivatives, hessian = gd.derivatives_and_hessians(
         f=make_quadratic(a),
         seed=seed,
     )
-    f_ = derivatives.round(2)
-    f__ = hessian.round(2)
-    print(f_)
-    print(f__)
+    # pylint:disable=unused-variable
+    f_ = derivatives
+    f__ = hessian
+    assert f__ == pytest.approx(a), f"Differentiated as\n{f__}\n, vs mades as\n{a}\n"
+
+def test_small_quadratic():
+    """
+    a 9 by 9 1/2 x^T A x
+    """
+    LEN = 9
+    a = np.random.rand(LEN, LEN)
+    a = (a + a.transpose())/2
+    seed = np.random.rand(LEN)
+
+    derivatives, hessian = gd.derivatives_and_hessians(
+        f=make_quadratic(a),
+        seed=seed,
+    )
+    # pylint:disable=unused-variable
+    f_ = derivatives
+    f__ = hessian
+    assert f__ == pytest.approx(a), f"Differentiated as\n{f__}\n, vs mades as\n{a}\n"
