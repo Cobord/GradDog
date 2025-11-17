@@ -2,7 +2,8 @@
 Quadratic form
 Hessian should give back A
 """
-#pylint:disable=invalid-name
+
+# pylint:disable=invalid-name
 
 from numpy.typing import NDArray
 import numpy as np
@@ -42,7 +43,7 @@ def test_smaller_quadratic():
     """
     LEN = 4
     a = np.random.rand(LEN, LEN)
-    a = (a + a.transpose())/2
+    a = (a + a.transpose()) / 2
     seed = np.random.rand(LEN)
 
     derivatives, hessian = gd.derivatives_and_hessians(
@@ -54,13 +55,14 @@ def test_smaller_quadratic():
     f__ = hessian
     assert f__ == pytest.approx(a), f"Differentiated as\n{f__}\n, vs mades as\n{a}\n"
 
+
 def test_small_quadratic():
     """
     a 9 by 9 1/2 x^T A x
     """
     LEN = 9
     a = np.random.rand(LEN, LEN)
-    a = (a + a.transpose())/2
+    a = (a + a.transpose()) / 2
     seed = np.random.rand(LEN)
 
     derivatives, hessian = gd.derivatives_and_hessians(

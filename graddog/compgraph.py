@@ -104,8 +104,9 @@ class CompGraph:
             # return new_trace_name to the Trace class
             return new_trace_name
 
-        def get_existing_trace(self, formula) \
-            -> Optional["Trace"]:  # type: ignore[reportUndefinedVariable]
+        def get_existing_trace(
+            self, formula
+        ) -> Optional["Trace"]:  # type: ignore[reportUndefinedVariable]
             """
             if you are calculating a term already in the table, just look it up
             for example,

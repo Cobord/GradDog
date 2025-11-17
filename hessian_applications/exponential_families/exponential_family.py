@@ -15,6 +15,7 @@ from graddog.trace import Trace
 
 from .observed_information import FDistribution
 
+
 # pylint:disable=too-few-public-methods
 class BaseMeasure(ABC):
     """
@@ -39,6 +40,7 @@ class BaseMeasure(ABC):
         if it is just restricting Lebesgue measure but with a scaling factor
         what is that scaling factor
         """
+
     @abstractmethod
     def rescaled(self, extra_scaling_factor: float) -> BaseMeasure:
         """
@@ -46,15 +48,18 @@ class BaseMeasure(ABC):
         usually used to normalize
         """
 
+
 class BoxedContinuous(BaseMeasure):
     """
     h(x) d\\mu_x = A dx
     in a box with a_i <= x_i <= b_i
     """
 
-    def __init__(self,
-                 bounds: Iterable[Tuple[Optional[float], Optional[float]]],
-                 scale_factor: float):
+    def __init__(
+        self,
+        bounds: Iterable[Tuple[Optional[float], Optional[float]]],
+        scale_factor: float,
+    ):
         super().__init__()
         self.bounds = bounds
         self.scale_factor = scale_factor
@@ -84,15 +89,20 @@ class BoxedContinuous(BaseMeasure):
         return self.scale_factor
 
     def rescaled(self, extra_scaling_factor: float) -> BaseMeasure:
-        return BoxedContinuous(list(self.bounds), self.scale_factor*extra_scaling_factor)
+        return BoxedContinuous(
+            list(self.bounds), self.scale_factor * extra_scaling_factor
+        )
+
 
 class HTimesMu(BaseMeasure):
     """
     It is absolutely continuous with respect to mu
     and multiplied by the nonnegative valued function h
     """
+
     mu: BaseMeasure
     h: Callable[[NDArray], float]
+
     def __init__(self, mu, h):
         self.mu = mu
         self.h = h
@@ -107,16 +117,18 @@ class HTimesMu(BaseMeasure):
         return None
 
     def rescaled(self, extra_scaling_factor: float) -> BaseMeasure:
-        return HTimesMu(self.mu.rescaled(extra_scaling_factor),self.h)
+        return HTimesMu(self.mu.rescaled(extra_scaling_factor), self.h)
+
 
 def one_gaussian_base_measure(mu: float, sigma: float) -> HTimesMu:
     """
     A gaussian measure on R with prescribed mu and sigma
     """
     return HTimesMu(
-        mu=BoxedContinuous([(None,None)],1/np.sqrt(2*np.pi)*1/sigma),
-        h = lambda x: np.exp(-((x-mu)*(x-mu)/(2*sigma*sigma)))
+        mu=BoxedContinuous([(None, None)], 1 / np.sqrt(2 * np.pi) * 1 / sigma),
+        h=lambda x: np.exp(-((x - mu) * (x - mu) / (2 * sigma * sigma))),
     )
+
 
 class ExponentialFamily(FDistribution):
     """
@@ -190,10 +202,10 @@ class ExponentialFamily(FDistribution):
     def f_function(
         self, x_i: PossibleArgument, theta: PossibleArgument
     ) -> Union[Trace, numbers.Number]:
-        #pylint:disable=useless-parent-delegation
+        # pylint:disable=useless-parent-delegation
         return super().f_function(x_i, theta)
 
-    #pylint:disable=too-many-branches
+    # pylint:disable=too-many-branches
     def log_f_function(
         self, x_i: PossibleArgument, theta: PossibleArgument
     ) -> Union[Trace, numbers.Number]:
@@ -206,8 +218,9 @@ class ExponentialFamily(FDistribution):
             scale_by = None
         else:
             scale_by = self._dh.restricted_lebesgue_scaling()
-            assert scale_by is not None,\
-                "We already checked that it was restricted Lebesgue when allowing constant scaling"
+            assert (
+                scale_by is not None
+            ), "We already checked that it was restricted Lebesgue when allowing constant scaling"
         ts, ts_np_array = self.t_function(x_i)
         if ts_np_array:
             ts = cast(NDArray, ts)
@@ -262,6 +275,7 @@ class ExponentialFamily(FDistribution):
         """
         a_val = self.a_function(np.array([0.0 for _ in range(self._num_etas)]))
         return self._dh.rescaled(np.exp(-a_val))
+
 
 if __name__ == "__main__":
     z = ExponentialFamily(

@@ -93,8 +93,9 @@ class FDistribution(ABC):
         try:
             to_return = self.log_f_function(next(x_is), theta)
             for item in x_is:
-                to_return = to_return + \
-                    self.log_f_function(item, theta)  # type: ignore[reportOperatorIssue]
+                to_return = to_return + self.log_f_function(
+                    item, theta
+                )  # type: ignore[reportOperatorIssue]
         except StopIteration:
             # pylint:disable = raise-missing-from
             raise ValueError("Empty Iterator. We need a nonzero number of observations")
@@ -232,9 +233,11 @@ class GeneralLogF(FDistribution):
 
 
 if __name__ == "__main__":
+
     def f_fun(_x, theta):
         """junk f for making sure works"""
         return theta
+
     z = GeneralF(f_fun, num_xi_known=1, thetas=np.array([2.3940]))
     print(z.f_function(cast(numbers.Number, 0.2), cast(numbers.Number, 0.1)))
     print(z.log_f_function(cast(numbers.Number, 2.71828), cast(numbers.Number, 0.1)))
@@ -247,6 +250,7 @@ if __name__ == "__main__":
     def logf_fun(_x, theta):
         """junk log f for making sure works"""
         return cast(Union[Trace, numbers.Number], log(theta))
+
     z = GeneralLogF(logf_fun, num_xi_known=1, thetas=np.array([2.3940]))
     print(z.f_function(cast(numbers.Number, 0.2), cast(numbers.Number, 0.1)))
     print(z.log_f_function(cast(numbers.Number, 2.71828), cast(numbers.Number, 0.1)))

@@ -200,7 +200,7 @@ def log(t: PossibleArgument, base: Union[float, int] = np.e):
                 return np.log(t) / np.log(base)  # type: ignore[reportCallIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([log(t_, base) for t_ in t]) # type: ignore[reportCallIssue]
+            return np.array([log(t_, base) for t_ in t])  # type: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
 

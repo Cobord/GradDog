@@ -114,8 +114,9 @@ def test_exp_base2():
     base = 2
     f = cast(Trace, exp(x, base=base))
     assert f._val == pytest.approx(32)
-    assert f._der["v1"] == \
-        (base ** cast(numbers.Number, x._val)) * np.log(base)  # type: ignore[reportOperatorIssue]
+    assert f._der["v1"] == (base ** cast(numbers.Number, x._val)) * np.log(
+        base
+    )  # type: ignore[reportOperatorIssue]
 
 
 def test_log():
