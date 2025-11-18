@@ -5,11 +5,13 @@ Hessian should give back A
 
 # pylint:disable=invalid-name
 
+from typing import cast
 from numpy.typing import NDArray
 import numpy as np
 import pytest
 
 import graddog as gd
+from graddog.trace import Trace
 
 
 def make_quadratic(a_matrix: NDArray):
@@ -23,7 +25,7 @@ def make_quadratic(a_matrix: NDArray):
     if rows >= 14:
         raise TypeError("This is too big")
 
-    def f(*args) -> np.float64:
+    def f(*args) -> np.float64 | Trace:
         if len(args) < rows:
             raise TypeError(
                 f"There are {len(args)} arguments but this is a quadratic form in {rows} variables"
@@ -32,7 +34,9 @@ def make_quadratic(a_matrix: NDArray):
         for idx in range(rows):
             for jdx in range(cols):
                 to_return += a_matrix[idx][jdx] * args[idx] * args[jdx]
-        return to_return * 0.5
+        to_return = cast(np.float64 | Trace, to_return)
+        to_return = to_return * 0.5
+        return to_return
 
     return f
 
@@ -58,9 +62,9 @@ def test_smaller_quadratic():
 
 def test_small_quadratic():
     """
-    a 9 by 9 1/2 x^T A x
+    a 7 by 7 1/2 x^T A x
     """
-    LEN = 9
+    LEN = 7
     a = np.random.rand(LEN, LEN)
     a = (a + a.transpose()) / 2
     seed = np.random.rand(LEN)

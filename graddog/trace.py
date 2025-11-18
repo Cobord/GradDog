@@ -6,6 +6,7 @@
 
 import numbers
 from typing import Optional, cast
+from graddog.types import NumberSpecifics
 import graddog.math as math
 from graddog.compgraph import CompGraph
 
@@ -225,7 +226,7 @@ class Variable(Trace):
     This is a class to create Variable instance
     """
 
-    def __init__(self, name, val):
+    def __init__(self, name, val: NumberSpecifics):
         """
         The constructor for Variable class.
 

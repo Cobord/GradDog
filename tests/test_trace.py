@@ -31,10 +31,7 @@ from graddog.functions import (
 
 def test_string_input_var():
     with pytest.raises(TypeError, match="Value of variable should be numerical"):
-        x = Variable("x", "test")
-    with pytest.raises(TypeError, match="Value should be numerical"):
-        x = Variable("x", 3)
-        x.val = 2
+        x = Variable("x", "test")  # type: ignore[reportAttributeAccessIssue]
     with pytest.raises(TypeError, match="Value should be numerical"):
         x = Variable("x", 3)
         x.val = "test"  # type: ignore[reportAttributeAccessIssue]

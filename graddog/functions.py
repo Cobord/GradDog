@@ -5,7 +5,7 @@ Any implementable unary (one_parent) or binary (two_parent) operations can be ad
 # pylint:disable=pointless-string-statement
 import numbers
 from collections.abc import Iterable
-from typing import Union, cast
+from typing import Optional, Tuple, Union, cast
 import numpy as np
 
 # pylint:disable=consider-using-from-import
@@ -13,12 +13,30 @@ import graddog.math as math
 
 # pylint:disable=unused-import
 from graddog.trace import Trace, one_parent
-
-type NumberSpecifics = float | int | numbers.Number
+from graddog.types import NumberSpecifics, NumericNDArray
 
 type PossibleArgument = Union[
     Trace, NumberSpecifics, Iterable[Union[Trace, NumberSpecifics]]
 ]
+
+
+def as_np_array(
+    z: PossibleArgument, num_entries: Optional[int] = None
+) -> Tuple[Union[NumericNDArray, PossibleArgument], bool]:
+    """
+    expecting NDArrays filled with numbers or traces
+    that are of shape (num_entries,)
+    """
+    try:
+        z = cast(np.typing.NDArray, z)
+        _ = z.shape
+        if num_entries is not None:
+            assert z.shape == (num_entries,)
+        if z.dtype.isnative:
+            return z, True
+        return z, False
+    except AttributeError:
+        return z, False
 
 
 # pylint:disable=raise-missing-from
@@ -108,7 +126,7 @@ def arccos(t: PossibleArgument):
                 return np.arccos(t)  # type: ignore[reportCallIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([arccos(t_) for t_ in t])
+            return np.array([arccos(t_) for t_ in t]) # pyright: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
 
@@ -303,4 +321,23 @@ def sigmoid(t: PossibleArgument):
             return 1 / (1 + np.exp(neg_t))
         if isinstance(t, Iterable) and not isinstance(t, str):
             return np.array([sigmoid(t_) for t_ in t])
+        raise TypeError("Input(s) must be Trace or scalar")
+
+
+# pylint:disable=raise-missing-from
+def abs_gd(t: PossibleArgument):
+    """
+    This allows to create abs().
+    Parameters:
+        t (Trace instance, scalar, or vector/list of Traces/scalars)
+    Return Trace that constitues abs() elementary function
+    """
+    try:
+        _t_val = t.val  # type: ignore[reportAttributeAccessIssue]
+        return one_parent(cast(Trace, t), math.Ops.abs)
+    except AttributeError:
+        if isinstance(t, numbers.Number):
+            return np.abs(t)  # type: ignore[reportCallIssue]
+        if isinstance(t, Iterable) and not isinstance(t, str):
+            return np.array([abs_gd(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")

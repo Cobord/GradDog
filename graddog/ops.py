@@ -95,6 +95,7 @@ class Ops:
     arcsin = OpName("arcsin")
     arccos = OpName("arccos")
     arctan = OpName("arctan")
+    abs = OpName("abs")
 
     one_parent_rules: Dict[OpName, OneParentOp] = {
         add: OneParentOp(
@@ -240,6 +241,13 @@ class Ops:
                 __VAL_KEY: lambda t, param: (np.exp(t) - np.exp(-t))
                 / (np.exp(t) + np.exp(-t)),
                 __DER_KEY: lambda t, param: 4 / ((np.exp(t) + np.exp(-t)) ** 2),
+            }
+        ),
+        abs: OneParentOp(
+            **{
+                __VAL_KEY: lambda t, param: t if t >= 0 else -t,
+                __DER_KEY: lambda t, param: 1 if t >= 0 else -1,
+                __DOUBLE_DER_KEY: lambda t, param: 0,
             }
         ),
     }

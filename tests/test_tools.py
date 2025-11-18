@@ -32,7 +32,9 @@ def test_plot_derivative_sq():
     def f(x):
         return x**2 + 1
 
-    xs, ys = tools.plot_derivative(f, 0, 5, n_pts=5)
+    xs, ys = tools.plot_derivative(
+        f, 0, 5, n_pts=5, plot_title="Plot of derivative of x^2 + 1"
+    )
     txs = np.linspace(0, 5, 5)
     tys = [2 * x for x in txs]
     assert (xs == txs).all()
@@ -43,7 +45,9 @@ def test_plot_derivative_cube():
     def f(x):
         return x**3 + 1
 
-    xs, ys = tools.plot_derivative(f, 0, 5, n_pts=5)
+    xs, ys = tools.plot_derivative(
+        f, 0, 5, n_pts=5, plot_title="Plot of derivative of x^3 + 1"
+    )
     txs = np.linspace(0, 5, 5)
     tys = [3 * x**2 for x in txs]
     assert (xs == txs).all()
@@ -54,8 +58,11 @@ def test_plot_derivative_trig():
     def f(x):
         return sin(x)
 
-    xs, ys = tools.plot_derivative(f, 0, 5, n_pts=5)
-    txs = np.linspace(0, 5, 5)
+    n_pts = 25
+    xs, ys = tools.plot_derivative(
+        f, 0, 5, n_pts=n_pts, plot_title="Plot of derivative of sin(x)"
+    )
+    txs = np.linspace(0, 5, n_pts)
     tys = [cos(x) for x in txs]
     assert (xs == txs).all()
     assert ys == tys

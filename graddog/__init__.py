@@ -1,17 +1,17 @@
 """:)"""
 
-from typing import Literal, Optional, Tuple, cast
+from typing import Iterable, Literal, Optional, Tuple, Union, cast
 import numpy as np
-from numpy.typing import NDArray
 from graddog.modes import Mode
 from graddog.trace import Variable
 from graddog.compgraph import CompGraph
+from graddog.types import NumericNDArray, TracesNDArray, NumberSpecifics
 
 
 # pylint:disable=invalid-name, too-many-statements, too-many-branches
 def trace(
     f,
-    seed,
+    seed: Union[Iterable[NumberSpecifics], NumberSpecifics],
     mode: Optional[Mode] | Literal["reverse"] | Literal["forward"] = None,
     return_second_deriv=False,
     verbose=False,
@@ -49,7 +49,7 @@ def trace(
 
     # infer the dimensionality of the input
     try:  # if multidimensional input
-        M = len(seed)  # get the dimension of the input
+        M = len(seed)  # type: ignore # get the dimension of the input
         seed = np.array(seed)
     except TypeError:  # if single-dimensional input
         M = 1
@@ -59,7 +59,9 @@ def trace(
 
     # create new variables
     names = [f"v{i+1}" for i in range(M)]
-    new_variables = np.array([Variable(names[i], seed[i]) for i in range(M)])
+    new_variables: TracesNDArray = np.array(
+        [Variable(names[i], seed[i]) for i in range(M)]
+    )
     #############################################################################
 
     ################ Trace the function ##############
@@ -76,7 +78,6 @@ def trace(
             if verbose:
                 print("...inferred the input is a vector...")
         except TypeError:
-            # as variables
             output = f(*new_variables, **kwargs)
             if verbose:
                 print("...inferred the inputs are variables...")
@@ -142,7 +143,7 @@ def trace(
     ########################################################
 
 
-def derivatives_only(f, seed, **kwargs) -> NDArray:
+def derivatives_only(f, seed, **kwargs) -> NumericNDArray:
     """
     f : a function
     seed: a vector/list of scalars. If f is single-dimensional, seed can be a scalar
@@ -159,7 +160,7 @@ def derivatives_only(f, seed, **kwargs) -> NDArray:
     f: Rm --> Rn using IMPLICIT vector input and IMPLICIT vector output
     """
     return cast(
-        NDArray,
+        NumericNDArray,
         trace(
             f=f,
             seed=seed,
@@ -170,7 +171,9 @@ def derivatives_only(f, seed, **kwargs) -> NDArray:
     )
 
 
-def derivatives_and_hessians(f, seed, **kwargs) -> Tuple[NDArray, NDArray]:
+def derivatives_and_hessians(
+    f, seed, **kwargs
+) -> Tuple[NumericNDArray, NumericNDArray]:
     """
     f : a function
     seed: a vector/list of scalars. If f is single-dimensional, seed can be a scalar

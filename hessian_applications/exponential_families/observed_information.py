@@ -11,11 +11,11 @@ import random
 import string
 from typing import Callable, Union, cast
 import numpy as np
-from numpy.typing import NDArray
 
 from graddog.functions import PossibleArgument, log
 import graddog as gd
 from graddog.trace import Trace, Variable
+from graddog.types import NumericNDArray, TracesNDArray
 
 
 def _gen_name(length: int) -> str:
@@ -53,7 +53,9 @@ class FDistribution(ABC):
 
     @abstractmethod
     def f_function(
-        self, x_i: PossibleArgument, theta: PossibleArgument
+        self,
+        x_i: Union[NumericNDArray, TracesNDArray],
+        theta: Union[NumericNDArray, TracesNDArray],
     ) -> Union[Trace, numbers.Number]:
         """
         density given the observed data ``x_i`` and the possibly
@@ -70,7 +72,9 @@ class FDistribution(ABC):
 
     @abstractmethod
     def log_f_function(
-        self, x_i: PossibleArgument, theta: PossibleArgument
+        self,
+        x_i: Union[NumericNDArray, TracesNDArray],
+        theta: Union[NumericNDArray, TracesNDArray],
     ) -> Union[Trace, numbers.Number]:
         """
         log density given the observed data ``x_i`` and the possibly
@@ -84,8 +88,10 @@ class FDistribution(ABC):
         )
 
     def log_likelihood(
-        self, x_is: Iterable[PossibleArgument], theta: PossibleArgument
-    ) -> PossibleArgument:
+        self,
+        x_is: Iterable[Union[NumericNDArray, TracesNDArray]],
+        theta: Union[NumericNDArray, TracesNDArray],
+    ) -> Union[Trace, numbers.Number]:
         """
         sum_{x_i} log f(x_i; theta)
         """
@@ -99,23 +105,26 @@ class FDistribution(ABC):
         except StopIteration:
             # pylint:disable = raise-missing-from
             raise ValueError("Empty Iterator. We need a nonzero number of observations")
+        assert isinstance(to_return, (Trace, numbers.Number)), f"{to_return}"
         return to_return
 
     @property
     @abstractmethod
-    def cur_thetas(self) -> NDArray:
+    def cur_thetas(self) -> NumericNDArray:
         """
         value of theta
         """
 
     @abstractmethod
-    def change_thetas(self, new_thetas: NDArray) -> NDArray:
+    def change_thetas(self, new_thetas: NumericNDArray) -> NumericNDArray:
         """
         change value of theta
         returning the previously stored ones
         """
 
-    def observed_information_matrix(self, x_is: Iterable[PossibleArgument]) -> NDArray:
+    def observed_information_matrix(
+        self, x_is: Iterable[Union[NumericNDArray, TracesNDArray]]
+    ) -> NumericNDArray:
         """
         The hessian of ``log_likelihood``
         at ``cur_thetas``
@@ -131,6 +140,31 @@ class FDistribution(ABC):
         )
         return -f__
 
+    def gradient_log_likelihood(
+        self,
+        x_is: Iterable[Union[NumericNDArray, TracesNDArray]],
+    ) -> NumericNDArray:
+        """
+        What is the gradient of log likelihood as a function of the thetas
+        """
+
+        def log_likelihood_to_trace(theta: NumericNDArray):
+            """
+            curry the x_is
+            """
+            assert theta.shape == (self.num_theta,)
+            for idx in range(self.num_theta):
+                assert isinstance(theta[idx], Variable)
+            to_return = self.log_likelihood(x_is, theta)
+            assert isinstance(to_return, Trace), f"{to_return}"
+            return to_return
+
+        f_ = gd.derivatives_only(
+            log_likelihood_to_trace,
+            self.cur_thetas,
+        )
+        return f_
+
 
 class GeneralF(FDistribution):
     """
@@ -143,7 +177,7 @@ class GeneralF(FDistribution):
             [PossibleArgument, PossibleArgument], Union[Trace, numbers.Number]
         ],
         num_xi_known: int,
-        thetas: NDArray,
+        thetas: NumericNDArray,
     ):
         self.f_stored = f_stored
         self.thetas = thetas
@@ -155,21 +189,25 @@ class GeneralF(FDistribution):
         return True
 
     def f_function(
-        self, x_i: PossibleArgument, theta: PossibleArgument
+        self,
+        x_i: Union[NumericNDArray, TracesNDArray],
+        theta: Union[NumericNDArray, TracesNDArray],
     ) -> Union[Trace, numbers.Number]:
         return self.f_stored(x_i, theta)
 
     def log_f_function(
-        self, x_i: PossibleArgument, theta: PossibleArgument
+        self,
+        x_i: Union[NumericNDArray, TracesNDArray],
+        theta: Union[NumericNDArray, TracesNDArray],
     ) -> Union[Trace, numbers.Number]:
         # pylint:disable=useless-parent-delegation
         return super().log_f_function(x_i, theta)
 
     @property
-    def cur_thetas(self) -> NDArray:
+    def cur_thetas(self) -> NumericNDArray:
         return self.thetas
 
-    def change_thetas(self, new_thetas: NDArray) -> NDArray:
+    def change_thetas(self, new_thetas: NumericNDArray) -> NumericNDArray:
         self.thetas, old_thetas = new_thetas, self.thetas
         return old_thetas
 
@@ -193,7 +231,7 @@ class GeneralLogF(FDistribution):
             [PossibleArgument, PossibleArgument], Union[Trace, numbers.Number]
         ],
         num_xi_known: int,
-        thetas: NDArray,
+        thetas: NumericNDArray,
     ):
         self.log_f_stored = log_f_stored
         self.thetas = thetas
@@ -205,21 +243,25 @@ class GeneralLogF(FDistribution):
         return False
 
     def log_f_function(
-        self, x_i: PossibleArgument, theta: PossibleArgument
+        self,
+        x_i: Union[NumericNDArray, TracesNDArray],
+        theta: Union[NumericNDArray, TracesNDArray],
     ) -> Union[Trace, numbers.Number]:
         return self.log_f_stored(x_i, theta)
 
     def f_function(
-        self, x_i: PossibleArgument, theta: PossibleArgument
+        self,
+        x_i: Union[NumericNDArray, TracesNDArray],
+        theta: Union[NumericNDArray, TracesNDArray],
     ) -> Union[Trace, numbers.Number]:
         # pylint:disable=useless-parent-delegation
         return super().f_function(x_i, theta)
 
     @property
-    def cur_thetas(self) -> NDArray:
+    def cur_thetas(self) -> NumericNDArray:
         return self.thetas
 
-    def change_thetas(self, new_thetas: NDArray) -> NDArray:
+    def change_thetas(self, new_thetas: NumericNDArray) -> NumericNDArray:
         self.thetas, old_thetas = new_thetas, self.thetas
         return old_thetas
 
@@ -239,23 +281,60 @@ if __name__ == "__main__":
         return theta
 
     z = GeneralF(f_fun, num_xi_known=1, thetas=np.array([2.3940]))
-    print(z.f_function(cast(numbers.Number, 0.2), cast(numbers.Number, 0.1)))
-    print(z.log_f_function(cast(numbers.Number, 2.71828), cast(numbers.Number, 0.1)))
-    print(z.log_likelihood([cast(numbers.Number, 2.71828)], cast(numbers.Number, 0.1)))
-    print(z.f_function(cast(numbers.Number, 0.2), Variable("theta", 0.1)))
-    print(z.log_f_function(cast(numbers.Number, 0.2), Variable("theta", 0.1)))
-    print(z.log_likelihood([cast(numbers.Number, 2.71828)], Variable("theta", 0.1)))
-    print(z.observed_information_matrix([0.2, Variable("x2", 0.3), 0.24, 0.28, 0.23]))
+    print(z.f_function(np.array([0.2]), np.array(0.1)))
+    print(z.log_f_function(np.array([2.71828]), np.array(0.1)))
+    print(z.log_likelihood(np.array([2.71828]), np.array(0.1)))
+    print(z.f_function(np.array([0.2]), np.array(Variable("theta", 0.1))))
+    print(z.log_f_function(np.array([0.2]), np.array(Variable("theta", 0.1))))
+    print(
+        z.log_likelihood(
+            np.array([cast(numbers.Number, 2.71828)]), np.array(Variable("theta", 0.1))
+        )
+    )
+    print(
+        z.observed_information_matrix(
+            np.array([0.2, Variable("x2", 0.3), 0.24, 0.28, 0.23])
+        )
+    )
 
     def logf_fun(_x, theta):
         """junk log f for making sure works"""
         return cast(Union[Trace, numbers.Number], log(theta))
 
     z = GeneralLogF(logf_fun, num_xi_known=1, thetas=np.array([2.3940]))
-    print(z.f_function(cast(numbers.Number, 0.2), cast(numbers.Number, 0.1)))
-    print(z.log_f_function(cast(numbers.Number, 2.71828), cast(numbers.Number, 0.1)))
-    print(z.log_likelihood([cast(numbers.Number, 2.71828)], cast(numbers.Number, 0.1)))
-    print(z.f_function(cast(numbers.Number, 0.2), Variable("theta", 0.1)))
-    print(z.log_f_function(cast(numbers.Number, 0.2), Variable("theta", 0.1)))
-    print(z.log_likelihood([cast(numbers.Number, 2.71828)], Variable("theta", 0.1)))
-    print(z.observed_information_matrix([0.2, Variable("x2", 0.3), 0.24, 0.28, 0.23]))
+    print(
+        z.f_function(
+            np.array([cast(numbers.Number, 0.2)]), np.array(cast(numbers.Number, 0.1))
+        )
+    )
+    print(
+        z.log_f_function(
+            np.array(cast(numbers.Number, 2.71828)), np.array(cast(numbers.Number, 0.1))
+        )
+    )
+    print(
+        z.log_likelihood(
+            np.array([cast(numbers.Number, 2.71828)]),
+            np.array(cast(numbers.Number, 0.1)),
+        )
+    )
+    print(
+        z.f_function(
+            np.array(cast(numbers.Number, 0.2)), np.array(Variable("theta", 0.1))
+        )
+    )
+    print(
+        z.log_f_function(
+            np.array(cast(numbers.Number, 0.2)), np.array(Variable("theta", 0.1))
+        )
+    )
+    print(
+        z.log_likelihood(
+            np.array([cast(numbers.Number, 2.71828)]), np.array(Variable("theta", 0.1))
+        )
+    )
+    print(
+        z.observed_information_matrix(
+            np.array([0.2, Variable("x2", 0.3), 0.24, 0.28, 0.23])
+        )
+    )
