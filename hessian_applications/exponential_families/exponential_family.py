@@ -223,7 +223,7 @@ class ExponentialFamily(FDistribution):
             x_i = cast(np.typing.NDArray, x_i)
             _ = x_i.shape
             xi_gen_np_array = True
-            xi_num_np_array = x_i.dtype.isnative
+            xi_num_np_array = not x_i.dtype.hasobject
         except AttributeError:
             pass
         if xi_num_np_array:

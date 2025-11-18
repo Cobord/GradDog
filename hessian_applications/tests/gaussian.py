@@ -52,7 +52,7 @@ def create_oned_gaussian(known_variance: Optional[float]) -> ExponentialFamily:
         if not eta.dtype.hasobject:
             assert isinstance(
                 eta[0], numbers.Number
-            ), f"{eta.dtype} {eta.dtype.isnative}"
+            ), f"{eta.dtype} not has object : {not eta.dtype.hasobject}"
             assert isinstance(eta[1], numbers.Number)
             return np.array(
                 -eta[0] * eta[0] / (4 * eta[1])
@@ -83,13 +83,10 @@ def create_oned_gaussian(known_variance: Optional[float]) -> ExponentialFamily:
         a function for a Gaussian with unknown mean and known variance
         """
         assert eta.shape == (1,)
-        if eta.dtype.isnative:
-            return np.array(
-                eta[0] * eta[0] / (4 * eta[1])
-                + 1 / 2 * np.log(np.abs(1 / (2 * eta[1])))
-            )
+        if not eta.dtype.hasobject:
+            return np.array([eta[0] * eta[0] / 2])
         eta = cast(TracesNDArray, eta)
-        z = eta[0] * eta[0] / (4 * eta[1]) + 1 / 2 * log(abs_gd(1 / (2 * eta[1])))
+        z = eta[0] * eta[0] / 2
         return np.array([z])
 
     return ExponentialFamily(
@@ -151,6 +148,7 @@ def main():
     """
 
     one_d_gaussian_unknown_both = create_oned_gaussian(None)
+    one_d_gaussian_unknown_both.set_etas(np.array([0.0, -0.5]))
     print(f"Cur thetas {one_d_gaussian_unknown_both}")
 
     for mu, sigma_squared in [(0.0, 1.0), (1.0, 1.0), (-3.0, 1.0)]:
@@ -168,14 +166,12 @@ def main():
             for x in x_mesh
         ]
 
-        plt.plot(
-            x_mesh, f_vals, color="red", label=f"log gauss(x;{mu},{sigma_squared})"
-        )
+        plt.plot(x_mesh, f_vals, color="red", label=f"gauss(x;{mu},{sigma_squared})")
         plt.plot(
             x_mesh,
             np.array(g_vals),
             color="blue",
-            label=f"log f exponential fam(x;{mu},{sigma_squared})",
+            label=f"f exponential fam(x;{mu},{sigma_squared})",
         )
         plt.title("Gaussian")
         plt.xlabel("x")

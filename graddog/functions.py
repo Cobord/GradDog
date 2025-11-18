@@ -32,7 +32,7 @@ def as_np_array(
         _ = z.shape
         if num_entries is not None:
             assert z.shape == (num_entries,)
-        if z.dtype.isnative:
+        if not z.dtype.hasobject:
             return z, True
         return z, False
     except AttributeError:
@@ -126,7 +126,9 @@ def arccos(t: PossibleArgument):
                 return np.arccos(t)  # type: ignore[reportCallIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
-            return np.array([arccos(t_) for t_ in t]) # pyright: ignore[reportCallIssue]
+            return np.array(
+                [arccos(t_) for t_ in t]
+            )  # pyright: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
 
