@@ -105,6 +105,11 @@ class FDistribution(ABC):
         except StopIteration:
             # pylint:disable = raise-missing-from
             raise ValueError("Empty Iterator. We need a nonzero number of observations")
+        if isinstance(to_return, np.ndarray):
+            assert to_return.shape == (
+                1,
+            ), f"Expected scalar, got shape {to_return.shape}"
+            to_return = to_return[0]
         assert isinstance(to_return, (Trace, numbers.Number)), f"{to_return}"
         return to_return
 
@@ -130,7 +135,7 @@ class FDistribution(ABC):
         at ``cur_thetas``
         """
 
-        def log_likelihood_to_trace(theta):
+        def log_likelihood_to_trace(theta: NumericNDArray):
             return self.log_likelihood(x_is, theta)
 
         # pylint:disable= unused-variable
@@ -152,12 +157,7 @@ class FDistribution(ABC):
             """
             curry the x_is
             """
-            assert theta.shape == (self.num_theta,)
-            for idx in range(self.num_theta):
-                assert isinstance(theta[idx], Variable)
-            to_return = self.log_likelihood(x_is, theta)
-            assert isinstance(to_return, Trace), f"{to_return}"
-            return to_return
+            return self.log_likelihood(x_is, theta)
 
         f_ = gd.derivatives_only(
             log_likelihood_to_trace,
@@ -278,6 +278,7 @@ if __name__ == "__main__":
 
     def f_fun(_x, theta):
         """junk f for making sure works"""
+
         return theta
 
     z = GeneralF(f_fun, num_xi_known=1, thetas=np.array([2.3940]))

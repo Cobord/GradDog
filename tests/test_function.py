@@ -10,6 +10,7 @@ import pytest
 import numpy as np
 from numpy.typing import NDArray
 import graddog as gd
+from graddog.compgraph import CompGraph
 from graddog.trace import Trace, Variable
 from graddog.functions import (
     sin,
@@ -102,6 +103,7 @@ def test_sqrt():
 
 
 def test_log_base2():
+    CompGraph.reset()
     x = Variable("x", 32)
     base = 2
     f = cast(Trace, log(x, base=base))
@@ -110,16 +112,19 @@ def test_log_base2():
 
 
 def test_exp_base2():
+    CompGraph.reset()
     x = Variable("x", 5)
     base = 2
     f = cast(Trace, exp(x, base=base))
     assert f._val == pytest.approx(32)
-    assert f._der["v1"] == (base ** cast(numbers.Number, x._val)) * np.log(
+    # pylint:disable=line-too-long
+    assert f._der["v1"] == (base ** cast(numbers.Number, x._val)) * np.log(  # type: ignore[reportOperatorIssue]
         base
-    )  # type: ignore[reportOperatorIssue]
+    )
 
 
 def test_log():
+    CompGraph.reset()
     value = 4
     x = Variable("x", value)
     f = cast(Trace, log(x))
@@ -130,6 +135,7 @@ def test_log():
 
 
 def test_exp():
+    CompGraph.reset()
     value = 67
     x = Variable("x", value)
     f = cast(Trace, exp(x))

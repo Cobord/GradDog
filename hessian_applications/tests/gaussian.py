@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 import pytest
+from graddog.compgraph import CompGraph
 from graddog.functions import NumberSpecifics, abs_gd, log
 from graddog.trace import Trace
 from graddog.types import NumericNDArray, TracesNDArray
@@ -107,6 +108,7 @@ def test_support():
     """
     test that the support of gaussians is the entire line
     """
+    CompGraph.reset()
     one_d_gaussian_unknown_both = create_oned_gaussian(None)
     for cur_pt in [-1.2, -0.2, 0.5, 1.3]:
         one_d_gaussian_unknown_both.in_support(np.array(cur_pt))
@@ -120,6 +122,7 @@ def test_logf_values_both():
     Test that log f obtained from ExponentialFamily
     matches with explicit gaussian PDF
     """
+    CompGraph.reset()
     one_d_gaussian_unknown_both = create_oned_gaussian(None)
     x_mesh = 1.0
     for mu, sigma_squared in [(0.0, 1.0), (1.0, 1.0), (0.0, 2.0), (1.0, 2.0)]:
@@ -147,6 +150,7 @@ def main():
     script version for gaussian examples
     """
 
+    CompGraph.reset()
     one_d_gaussian_unknown_both = create_oned_gaussian(None)
     one_d_gaussian_unknown_both.set_etas(np.array([0.0, -0.5]))
     print(f"Cur thetas {one_d_gaussian_unknown_both}")

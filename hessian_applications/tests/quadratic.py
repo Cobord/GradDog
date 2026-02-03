@@ -11,6 +11,7 @@ import numpy as np
 import pytest
 
 import graddog as gd
+from graddog.compgraph import CompGraph
 from graddog.trace import Trace
 
 
@@ -45,6 +46,7 @@ def test_smaller_quadratic():
     """
     a 4 by 4 1/2 x^T A x
     """
+    CompGraph.reset()
     LEN = 4
     a = np.random.rand(LEN, LEN)
     a = (a + a.transpose()) / 2
@@ -64,6 +66,7 @@ def test_small_quadratic():
     """
     a 7 by 7 1/2 x^T A x
     """
+    CompGraph.reset()
     LEN = 7
     a = np.random.rand(LEN, LEN)
     a = (a + a.transpose()) / 2

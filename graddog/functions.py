@@ -55,6 +55,8 @@ def sin(t: PossibleArgument):
         if isinstance(t, numbers.Number):
             return np.sin(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([sin(t_) for t_ in t])  # type: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -81,6 +83,8 @@ def arcsin(t: PossibleArgument):
                 return np.arcsin(t)  # type: ignore[reportCallIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([arcsin(t_) for t_ in t])  # type: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -100,6 +104,8 @@ def cos(t: PossibleArgument):
         if isinstance(t, numbers.Number):
             return np.cos(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([cos(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -126,6 +132,8 @@ def arccos(t: PossibleArgument):
                 return np.arccos(t)  # type: ignore[reportCallIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array(
                 [arccos(t_) for t_ in t]
             )  # pyright: ignore[reportCallIssue]
@@ -147,6 +155,8 @@ def tan(t: PossibleArgument):
         if isinstance(t, numbers.Number):
             return np.tan(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([tan(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -168,6 +178,8 @@ def arctan(t: PossibleArgument):
         if isinstance(t, numbers.Number):
             return np.arctan(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([arctan(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -192,6 +204,8 @@ def exp(t: PossibleArgument, base: Union[float, int] = np.e):
         if isinstance(t, numbers.Number):
             return np.power(base, t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([exp(t_, base) for t_ in t])  # type: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -220,6 +234,8 @@ def log(t: PossibleArgument, base: Union[float, int] = np.e):
                 return np.log(t) / np.log(base)  # type: ignore[reportCallIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([log(t_, base) for t_ in t])  # type: ignore[reportCallIssue]
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -240,6 +256,8 @@ def sinh(t: PossibleArgument):
         if isinstance(t, numbers.Number):
             return np.sinh(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([sinh(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -259,6 +277,8 @@ def cosh(t: PossibleArgument):
         if isinstance(t, numbers.Number):
             return np.cosh(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([cosh(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -278,6 +298,8 @@ def tanh(t: PossibleArgument):
         if isinstance(t, numbers.Number):
             return np.tanh(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([tanh(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -302,6 +324,8 @@ def sqrt(t: PossibleArgument):
                 return t**0.5  # type: ignore[reportOperatorIssue]
             raise ValueError("Input out of domain")
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([sqrt(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -322,6 +346,8 @@ def sigmoid(t: PossibleArgument):
             neg_t = -t  # type: ignore[reportOperatorIssue]
             return 1 / (1 + np.exp(neg_t))
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([sigmoid(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
 
@@ -341,5 +367,7 @@ def abs_gd(t: PossibleArgument):
         if isinstance(t, numbers.Number):
             return np.abs(t)  # type: ignore[reportCallIssue]
         if isinstance(t, Iterable) and not isinstance(t, str):
+            if isinstance(t, np.ndarray) and t.shape == ():
+                t = [t.item()]
             return np.array([abs_gd(t_) for t_ in t])
         raise TypeError("Input(s) must be Trace or scalar")
