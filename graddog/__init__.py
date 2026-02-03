@@ -143,7 +143,9 @@ def trace(
     ########################################################
 
 
-def derivatives_only(f, seed, **kwargs) -> NumericNDArray:
+def derivatives_only(
+    f, seed: NumberSpecifics | Iterable[NumberSpecifics], **kwargs
+) -> NumericNDArray:
     """
     f : a function
     seed: a vector/list of scalars. If f is single-dimensional, seed can be a scalar
@@ -172,7 +174,7 @@ def derivatives_only(f, seed, **kwargs) -> NumericNDArray:
 
 
 def derivatives_and_hessians(
-    f, seed, **kwargs
+    f, seed: NumberSpecifics | Iterable[NumberSpecifics], **kwargs
 ) -> Tuple[NumericNDArray, NumericNDArray]:
     """
     f : a function

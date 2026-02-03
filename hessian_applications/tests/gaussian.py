@@ -37,7 +37,7 @@ def create_oned_gaussian(known_variance: Optional[float]) -> ExponentialFamily:
             return np.array([x, x * x])  # type: ignore
         try:
             assert x.shape == (1,), x.shape
-            x = x[0]
+            x = x[0]  # type: ignore
             return np.array([x, x * x])  # type: ignore
         except Exception as e:
             raise TypeError("Trace or number or NDArray of shape 1") from e
